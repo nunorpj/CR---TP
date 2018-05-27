@@ -23,11 +23,11 @@ public class Exame {
 	public void setResultado(String resultado) {
 		Resultado = resultado;
 	}
-	public Exame(int id, String designacao, String resultado) {
+	public Exame(int id, String designacao) {
 		super();
 		this.id = id;
 		Designacao = designacao;
-		Resultado = resultado;
+		Resultado = null;
 	}
 	
 	
