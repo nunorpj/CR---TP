@@ -6,7 +6,7 @@ public class Paciente {
 
 	private int Id; //id do paciente(atribuir automaticamente)
 	private String Nome; //nome do paciente
-	private Vector<Integer> Nodolos; //vetor de ids do modulos do paciente
+	private Vector<Nodule> Nodolos; //vetor de modulos do paciente
 	private int HCC; // se tiver HCC add id do mesmo, senao 0;
 
 	
@@ -22,10 +22,11 @@ public class Paciente {
 	public void setNome(String nome) {
 		Nome = nome;
 	}
-	public Vector<Integer> getNodolos() {
+
+	public Vector<Nodule> getNodolos() {
 		return Nodolos;
 	}
-	public void setNodolos(Vector<Integer> nodolos) {
+	public void setNodolos(Vector<Nodule> nodolos) {
 		Nodolos = nodolos;
 	}
 	public int getHCC() {
