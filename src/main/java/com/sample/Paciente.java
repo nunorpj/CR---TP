@@ -8,7 +8,7 @@ public class Paciente {
 	private String Nome; //nome do paciente
 	private Vector<Nodule> Nodolos; //vetor de modulos do paciente
 	private int Id_Exame; // id do exame // 0 se nao tiver exame
-	
+	private HCC hcc;
 	
 	public int getId_Exame() {
 		return Id_Exame;
@@ -43,6 +43,13 @@ public class Paciente {
 		Nome = nome;
 		Nodolos = new Vector<>();
 		Id_Exame = 0;
+		setHcc(null);
+	}
+	public HCC getHcc() {
+		return hcc;
+	}
+	public void setHcc(HCC hcc) {
+		this.hcc = hcc;
 	}
 
 }
