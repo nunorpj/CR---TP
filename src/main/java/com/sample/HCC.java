@@ -1,19 +1,23 @@
 package com.sample;
 
+import java.util.Vector;
+
 public class HCC {
 	private int id;
-	private String Stage;
+	private char Stage;
 	private String Tratamento;
+	private Vector<Nodule> Nodolos; //vetor de modulos do paciente
+
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getStage() {
+	public char getStage() {
 		return Stage;
 	}
-	public void setStage(String stage) {
+	public void setStage(char stage) {
 		Stage = stage;
 	}
 	public String getTratamento() {
@@ -22,11 +26,21 @@ public class HCC {
 	public void setTratamento(String tratamento) {
 		Tratamento = tratamento;
 	}
-	public HCC(int id, String stage) {
+	
+	
+	
+	public Vector<Nodule> getNodolos() {
+		return Nodolos;
+	}
+	
+	public void addNodolos(Nodule nodolo) {
+		Nodolos.add(nodolo);
+	}
+	
+	public HCC() {
 		super();
-		this.id = id;
-		Stage = stage;
 		Tratamento = null;
+		Nodolos = new Vector<>(); 
 	}
 	
 	

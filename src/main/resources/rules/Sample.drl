@@ -1,14 +1,90 @@
 package com.sample
+ import java.util.*;
  
-import com.sample.DroolsTest.Message;
- 
-rule "Hello World"
+//Exam 0 = not exam
+//Exam 1 = US
+//Exam 2 = 4-phase CT
+//Exam 3 = biopsy
+
+rule "paciente"
+	salience 100
     when
-        m : Message( status == Message.HELLO, myMessage : message )
+        $p : Paciente();
     then
-        System.out.println( myMessage );
-        m.setMessage( "Goodbye cruel world" );
-        m.setStatus( Message.GOODBYE );
-        update( m );
+    	System.out.println($p.getNome());
+
+        
 end
+
+rule "US"
+	salience 90
+    when
+        $n :Nodule(exame==1)
+        not HCC();
+    then
+        System.out.println("What's the US result in nodule " + $n.getId() + "?");
+    	Scanner input = new Scanner(System.in);
+    	Float t = input.nextFloat();
+    	$n.setTamanho(t);
+    	if(t<1){
+    		$n.setExame(1);
+    		System.out.println("Stabel, repeat US at 4 mo");
+    	}else {
+    		$n.setExame(2);
+        System.out.println("Nodulo with size " + t + "cm it's need a 4 -phase CT");
+        }
+        update($n);
+        
+end
+
+
+rule "4-phase ct"
+	salience 80
+    when
+        $n :Nodule(exame==2);
+        not HCC();
+    then
+        System.out.println("How much positive tecniques in the 4-phase ct on nodule " + $n.getId() + "?");
+    	Scanner input = new Scanner(System.in);
+    	int nPositives = input.nextInt();
+		if(nPositives == 0){
+			System.out.println("It's needed an Biopsy!");
+			$n.setExame(3);
+		}else{
+			System.out.println("Its HCC!");
+			$n.setExame(4);
+			insert(new HCC());
+		}
+		update($n);
+end
+
+
+rule "Biopsy"
+	salience 70
+    when
+        $n :Nodule(exame==3);
+        not HCC();
+    then
+        System.out.println("The Biopsy result on nodule " + $n.getId() + " was possitive?");
+    	Scanner input = new Scanner(System.in);
+    	String result = input.nextLine();
+		if(result.equalsIgnoreCase("yes")){
+			System.out.println("It's HCC!");
+			insert(new HCC());
+		}else{
+			System.out.println("It's Inconclusive,please repeat US at 4 mo");
+			$n.setExame(1);
+		}
+		update($n);
+end
+
+
+rule "HCC-stage"
+	salience 60
+    when
+       exists $h : HCC();
+    then
+        System.out.println("Toi?");
+end
+
 
