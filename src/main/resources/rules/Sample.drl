@@ -1,8 +1,8 @@
 package com.sample
  import java.util.*;
  
-//Exam 0 = not exam
-//Exam 1 = US
+//Exam 0 = US
+//Exam 1 = Repeat US
 //Exam 2 = 4-phase CT
 //Exam 3 = biopsy
 
@@ -19,7 +19,7 @@ end
 rule "US"
 	salience 90
     when
-        $n :Nodule(exame==1)
+        $n :Nodule(exame==0)
         not HCC();
     then
         System.out.println("What's the US result in nodule " + $n.getId() + "?");
