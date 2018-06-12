@@ -16,8 +16,12 @@ rule "paciente"
         
 end
 
+
+
+
+
 rule "US"
-	salience 90
+	salience 80
     when
         $n :Nodule(exame==0)
         not HCC();
@@ -39,7 +43,7 @@ end
 
 
 rule "4-phase ct"
-	salience 80
+	salience 70
     when
         $n :Nodule(exame==2);
         not HCC();
@@ -60,7 +64,7 @@ end
 
 
 rule "Biopsy"
-	salience 70
+	salience 60
     when
         $n :Nodule(exame==3);
         not HCC();
@@ -80,7 +84,7 @@ end
 
 
 rule "HCC-stage"
-	salience 60
+	salience 50
     when
        exists $h : HCC();
     then
