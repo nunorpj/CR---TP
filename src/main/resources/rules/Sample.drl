@@ -1,15 +1,11 @@
 package com.sample
  import java.util.*;
-//NOTAS
-//
-//Exam 0 = US
-//Exam 1 = Repeat US
-//Exam 2 = 4-phase CT
-//Exam 3 = biopsy
 
 
 //Regras de perguntas do paciente
-
+//NOTAS
+//
+//
 rule "paciente tem cirrose"
 	salience 100
     when
@@ -162,7 +158,9 @@ rule "paciente esta a aguandar transplate hepatico"
 end
 
 //Regras para ver se o paciente é apto para vigilancia
-
+//NOTAS
+//
+//
 rule "1 regra para determinar se o paciente deve ir para vigilancia"
 	salience 92
     when
@@ -208,13 +206,25 @@ rule " o paciente nao deve ir para vigilancia"
     when
         $p : Paciente(aptoParaViginalancia == -1 );
     then
-        System.out.println("o "+$p.getNome() + "não deve ir para vigilancia, obrigado");
+        System.out.println("o "+$p.getNome() + " não deve ir para vigilancia, obrigado");
         $p.setAptoParaViginalancia(0);
         System.exit(0);
 		update($p); 
 end
 
 //regras para analizar os nodulos
+//NOTAS
+//
+//Exam 0 = US
+//Exam 1 = Repeat US
+//Exam 2 = TC e RM
+//Exam 3 = TC e RM com equipamento sufisticado
+//Exam 4 = biopsy
+//Exam 5 = null
+//
+//o exame 2 e 3 passam na mesma regra, 
+//mas o exame 3 passa tambem na regra para saber 
+//se o equipamento foi sufisticado
 
 rule "US"
 	salience 75
@@ -222,63 +232,88 @@ rule "US"
         $n :Nodule(exame==0)
         not HCC();
     then
-        System.out.println("What's the US result in nodule " + $n.getId() + "?");
+        System.out.println("Qual o tamanho do nodulo " + $n.getId() + " na ecografia ?");
     	Scanner input = new Scanner(System.in);
     	Float t = input.nextFloat();
     	$n.setTamanho(t);
     	if(t<1){
     		$n.setExame(1);
-    		System.out.println("Stabel, repeat US at 4 mo");
-    	}else {
-    		$n.setExame(2);
-        System.out.println("Nodulo with size " + t + "cm it's need a 4 -phase CT");
-        }
+    		System.out.println("Estavel, reptir ecografia daqui a 4 meses");
+    	}else if(t>1 &&t<2){
+    		$n.setExame(3);//preciso de vereficar se o equipamento é sofisticado
+        	System.out.println("Nodulo com" + t + "cm é necessario um CT ou RM Dinamica com contraste");
+        	System.out.println("Recomendado centro de excelencia");
+        }else if(t>2){
+       	 	$n.setExame(2);
+       	 	System.out.println("Nodulo com" + t + "cm é necessario um CT ou RM Dinamica com contraste");
+       	 }
         update($n);
         
 end
 
 
-rule "4-phase ct"
+rule "ct e rm"
 	salience 70
     when
-        $n :Nodule(exame==2);
+        $n :Nodule(exame==2 || exame ==3);
         not HCC();
     then
-        System.out.println("How much positive tecniques in the 4-phase ct on nodule " + $n.getId() + "?");
+        System.out.println("Quantas tecnicas ficaram positivas no nodulo " + $n.getId() + "?(1 ou 2)");
     	Scanner input = new Scanner(System.in);
     	int nPositives = input.nextInt();
 		if(nPositives == 0){
-			System.out.println("It's needed an Biopsy!");
-			$n.setExame(3);
-		}else{
-			System.out.println("Its HCC!");
+			System.out.println("É necessario uma Biopsia !");
 			$n.setExame(4);
+		}else if(nPositives>=2 || ($n.getExame() ==2  && nPositives >= 1)){
+			System.out.println("É HCC!");
+			$n.setExame(5);
 			insert(new HCC());
 		}
 		update($n);
 end
 
 
-rule "Biopsy"
-	salience 60
+rule "equipamento sofisticado"
+	salience 69
     when
         $n :Nodule(exame==3);
         not HCC();
     then
-        System.out.println("The Biopsy result on nodule " + $n.getId() + " was possitive?");
+        System.out.println("o equipamento usado na realizacao dos exames ao nodulo " + $n.getId() + " era sofisticado ?");
+    
     	Scanner input = new Scanner(System.in);
-    	String result = input.nextLine();
-		if(result.equalsIgnoreCase("yes")){
-			System.out.println("It's HCC!");
+    	String result = input.nextLine();	
+	
+		if(result.equalsIgnoreCase("sim")){
+			System.out.println("É HCC!");
+			$n.setExame(5);
 			insert(new HCC());
 		}else{
-			System.out.println("It's Inconclusive,please repeat US at 4 mo");
+			System.out.println("É necessario uma Biopsia !");
+			$n.setExame(4);
+		}
+		update($n);
+end
+rule "Biopsy"
+	salience 60
+    when
+        $n :Nodule(exame==4);
+        not HCC();
+    then
+        System.out.println("O resultado da Biopsia ao nodulo " + $n.getId() + " foi positiva?");
+    	Scanner input = new Scanner(System.in);
+    	String result = input.nextLine();
+		if(result.equalsIgnoreCase("sim")){
+			System.out.println("É HCC!");
+			insert(new HCC());
+		}else{
+			System.out.println("Resultado inconclusivo ,porfavor repita a Ecografia daqui a 4 meses");
 			$n.setExame(1);
 		}
 		update($n);
 end
 
-
+//Determinar o estagio de HCH
 rule "HCC-stage"
 	salience 50
     when
