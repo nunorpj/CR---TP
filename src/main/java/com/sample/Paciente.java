@@ -6,14 +6,16 @@ public class Paciente {
 
 	private String Nome; //nome do paciente
 	private Vector<Nodule> Nodolos; //vetor de modulos do paciente
-	private boolean cirrose;
+	private int cirrose;
 	private char estadio; //0 = nada, A,B,C,D
-	private boolean VHB;
-	private boolean hepatite_ativa;
-	private boolean historicoCHC; //historico de familiar com chc
-	private boolean HepatiteCronica;
-	private boolean fibroseHipaticaAvançada;
-	private boolean aptoParaViginalancia;
+	private int VHB;
+	private int hepatite_ativa;
+	private int historicoCHC; //historico de familiar com chc
+	private int HepatiteCronica;
+	private int fibroseHipaticaAvançada;
+	private int aAguardarTransplanteHepático;
+
+	private int aptoParaViginalancia;
 	
 	public String getNome() {
 		return Nome;
@@ -30,11 +32,13 @@ public class Paciente {
 		Nodolos.add(nodolos);
 	}
 
-	public boolean isCirrose() {
+	
+
+	public int getCirrose() {
 		return cirrose;
 	}
 
-	public void setCirrose(boolean cirrose) {
+	public void setCirrose(int cirrose) {
 		this.cirrose = cirrose;
 	}
 
@@ -46,68 +50,75 @@ public class Paciente {
 		this.estadio = estadio;
 	}
 
-	public boolean isVHB() {
+	public int getVHB() {
 		return VHB;
 	}
 
-	public void setVHB(boolean vHB) {
+	public void setVHB(int vHB) {
 		VHB = vHB;
 	}
 
-	public boolean isHepatite_ativa() {
+	public int getHepatite_ativa() {
 		return hepatite_ativa;
 	}
 
-	public void setHepatite_ativa(boolean hepatite_ativa) {
+	public void setHepatite_ativa(int hepatite_ativa) {
 		this.hepatite_ativa = hepatite_ativa;
 	}
 
-	public boolean isHistoricoCHC() {
+	public int getHistoricoCHC() {
 		return historicoCHC;
 	}
 
-	public void setHistoricoCHC(boolean historicoCHC) {
+	public void setHistoricoCHC(int historicoCHC) {
 		this.historicoCHC = historicoCHC;
 	}
 
-	public boolean isHepatiteCronica() {
+	public int getHepatiteCronica() {
 		return HepatiteCronica;
 	}
 
-	public void setHepatiteCronica(boolean hepatiteCronica) {
+	public void setHepatiteCronica(int hepatiteCronica) {
 		HepatiteCronica = hepatiteCronica;
 	}
 
-	public boolean isFibroseHipaticaAvançada() {
+	public int getFibroseHipaticaAvançada() {
 		return fibroseHipaticaAvançada;
 	}
 
-	public void setFibroseHipaticaAvançada(boolean fibroseHipaticaAvançada) {
+	public void setFibroseHipaticaAvançada(int fibroseHipaticaAvançada) {
 		this.fibroseHipaticaAvançada = fibroseHipaticaAvançada;
 	}
 
-	
-	
-	public boolean isAptoParaViginalancia() {
+	public int getAptoParaViginalancia() {
 		return aptoParaViginalancia;
 	}
 
-	public void setAptoParaViginalancia(boolean aptoParaViginalancia) {
+	public void setAptoParaViginalancia(int aptoParaViginalancia) {
 		this.aptoParaViginalancia = aptoParaViginalancia;
 	}
 
-	public Paciente(String nome, boolean cirrose, char estadio, boolean vHB, boolean hepatite_ativa,
-			boolean historicoCHC, boolean hepatiteCronica, boolean fibroseHipaticaAvançada) {
+	
+	public int getaAguardarTransplanteHepático() {
+		return aAguardarTransplanteHepático;
+	}
+
+	public void setaAguardarTransplanteHepático(int aAguardarTransplanteHepático) {
+		this.aAguardarTransplanteHepático = aAguardarTransplanteHepático;
+	}
+
+	public Paciente(String nome) {
 		super();
 		this.Nome = nome;
-		this.cirrose = cirrose;
-		this.estadio = estadio;
-		this.VHB = vHB;
-		this.hepatite_ativa = hepatite_ativa;
-		this.historicoCHC = historicoCHC;
-		this.HepatiteCronica = hepatiteCronica;
-		this.fibroseHipaticaAvançada = fibroseHipaticaAvançada;
-		this.aptoParaViginalancia = false;
+		this.cirrose = -1;//
+		this.estadio = 'F';//F de nada ainda
+		this.VHB = -1;//
+		this.hepatite_ativa = -1;//
+		this.historicoCHC = -1;//
+		this.HepatiteCronica = -1;//
+		this.fibroseHipaticaAvançada = -1;//
+		this.aAguardarTransplanteHepático =-1;//
+		this.aptoParaViginalancia = -1;
 	}
 
 	
