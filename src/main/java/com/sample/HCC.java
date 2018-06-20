@@ -49,6 +49,8 @@ public class HCC {
 	
 }
 
+
+// os nodulos teem de ter o local deles por causa do PNM
 /*
 A categoria N descreve se o câncer se espalhou para os linfonodos vizinhos:
 

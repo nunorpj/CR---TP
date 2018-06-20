@@ -6,7 +6,8 @@ public class Nodule {
 	private int  id;
 	private int exame;
 	
-	
+	// os nodulos teem de ter o local deles por causa do PNM
+
 	public int getExame() {
 		return exame;
 	}
