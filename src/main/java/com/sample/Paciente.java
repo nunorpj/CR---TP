@@ -14,7 +14,8 @@ public class Paciente {
 	private int HepatiteCronica;
 	private int fibroseHipaticaAvançada;
 	private int aAguardarTransplanteHepático;
-
+	private int PS_KARNOFSKY;
+	private int PS_ECOG;
 	private int aptoParaViginalancia;
 	
 	public String getNome() {
@@ -107,6 +108,7 @@ public class Paciente {
 		this.aAguardarTransplanteHepático = aAguardarTransplanteHepático;
 	}
 
+	
 	public Paciente(String nome) {
 		super();
 		this.Nome = nome;
@@ -119,6 +121,24 @@ public class Paciente {
 		this.fibroseHipaticaAvançada = -1;//
 		this.aAguardarTransplanteHepático =-1;//
 		this.aptoParaViginalancia = -1;
+		this.PS_ECOG =-1;
+		this.PS_KARNOFSKY = -1;
+	}
+
+	public int getPS_KARNOFSKY() {
+		return PS_KARNOFSKY;
+	}
+
+	public void setPS_KARNOFSKY(int pS_KARNOFSKY) {
+		PS_KARNOFSKY = pS_KARNOFSKY;
+	}
+
+	public int getPS_ECOG() {
+		return PS_ECOG;
+	}
+
+	public void setPS_ECOG(int pS_ECOG) {
+		PS_ECOG = pS_ECOG;
 	}
 
 	

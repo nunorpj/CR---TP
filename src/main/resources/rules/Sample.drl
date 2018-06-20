@@ -12,6 +12,7 @@ rule "paciente tem cirrose"
         $p : Paciente(cirrose == -1);
     then
     	System.out.println("o paciente " + $p.getNome()+ " tem cirrose?");
+		System.out.print("» ");
 		
 		Scanner input = new Scanner(System.in);
     	String result = input.nextLine();
@@ -30,6 +31,7 @@ rule "child-pugh"
         $p : Paciente(estadio == 'F' && cirrose == 1);
     then
     	System.out.println("o paciente " + $p.getNome()+ " esta em que estagio de Child-Pugh?(A,B,C, 0 nunhum)");
+		System.out.print("» ");
 		
 		Scanner input = new Scanner(System.in);
     	char result =  input.next().charAt(0);
@@ -52,6 +54,7 @@ rule "paciente tem VHB"
         $p : Paciente(VHB == -1);
     then
     	System.out.println("o paciente " + $p.getNome()+ " é portador cronico de VHB?");
+		System.out.print("» ");
 		
 		Scanner input = new Scanner(System.in);
     	String result = input.nextLine();
@@ -71,6 +74,7 @@ rule "paciente tem hepatite ativa"
         $p : Paciente(hepatite_ativa == -1);
     then
     	System.out.println("o paciente " + $p.getNome()+ " tem hepatite activa?");
+		System.out.print("» ");
 		
 		Scanner input = new Scanner(System.in);
     	String result = input.nextLine();
@@ -89,7 +93,7 @@ rule "paciente com historia de familia de CHC "
         $p : Paciente(historicoCHC == -1);
     then
     	System.out.println("o paciente " + $p.getNome()+ " tem algum familiar com historico de CHC?");
-		
+		System.out.print("» ");
 		Scanner input = new Scanner(System.in);
     	String result = input.nextLine();
 		if(result.equalsIgnoreCase("sim")){
@@ -107,7 +111,7 @@ rule "paciente tem hepatite cronica "
         $p : Paciente(HepatiteCronica == -1);
     then
     	System.out.println("o paciente " + $p.getNome()+ " tem hepatite crónica?");
-		
+		System.out.print("» ");
 		Scanner input = new Scanner(System.in);
     	String result = input.nextLine();
 		if(result.equalsIgnoreCase("sim")){
@@ -126,7 +130,7 @@ rule "paciente tem fibrose hepatica avançada "
         $p : Paciente(fibroseHipaticaAvançada == -1);
     then
     	System.out.println("o paciente " + $p.getNome()+ " tem fibrose hepatica avancada?");
-		
+		System.out.print("» ");
 		Scanner input = new Scanner(System.in);
     	String result = input.nextLine();
 		if(result.equalsIgnoreCase("sim")){
@@ -145,7 +149,7 @@ rule "paciente esta a aguandar transplate hepatico"
         $p : Paciente(aAguardarTransplanteHepático == -1);
     then
     	System.out.println("o paciente " + $p.getNome()+ " esta a aguandar transplate hepatico?");
-		
+		System.out.print("» ");
 		Scanner input = new Scanner(System.in);
     	String result = input.nextLine();
 		if(result.equalsIgnoreCase("sim")){
@@ -157,12 +161,100 @@ rule "paciente esta a aguandar transplate hepatico"
         
 end
 
+//este é mais perciso
+rule "PS KARNOFSKY"
+	salience 92
+    when
+        $p : Paciente(PS_KARNOFSKY == -1);
+    then
+    	System.out.println("Indique escala de desempenho Karnofsky do paciente " + $p.getNome()+ " ?");
+		System.out.println("100 - Normal, sem queixas e sem ividencia de doenças");
+		System.out.println("90 - Capaz de efectuar tarefas normais, sintomas ou sinais de doença menores ");
+		System.out.println("80 - Atividade normal com esforço, alguns sinais ou sintomas de doença");
+		System.out.println("70 - Cuida de si mesmo, mas incapaz de realizar uma atividade normal ou de fazer um trabalho ativo");
+		System.out.println("60 - Requer assistência ocasional, mas é capaz de cuidar da maioria das necessidades pessoais");
+		System.out.println("50 - Requer assistência considerável e cuidados médicos freqüentes");
+		System.out.println("40 - Deficente,requer cuidados e assistência especiais");
+		System.out.println("30 - Deficente sério, a hospitalização é indicada, embora a morte não seja iminente");
+		System.out.println("20 - Muito doente,  hospitalização e cuidados de suporte ativos necessários");
+		System.out.println("10 - Moribundo");
+		System.out.println("0 - Morto");
+		System.out.print("» ");
+		Scanner input = new Scanner(System.in);
+    	int result =  input.nextInt();
+		if(result>=0 && result<=100){
+			$p.setPS_KARNOFSKY(result);;
+		}else{
+			$p.setaAguardarTransplanteHepático(-1);
+		}
+		update($p);
+        
+end
+
+rule "PS ECOG 0 "
+	salience 91
+    when
+        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 89);
+    then
+		$p.setPS_ECOG(0);
+		update($p);
+        
+end
+
+rule "PS ECOG 1 "
+	salience 90
+    when
+        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 69 && PS_KARNOFSKY < 90);
+    then
+		$p.setPS_ECOG(1);
+		update($p);
+        
+end
+
+rule "PS ECOG 2 "
+	salience 89
+    when
+        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 49 && PS_KARNOFSKY < 70);
+    then
+		$p.setPS_ECOG(2);
+		update($p);  
+end
+
+rule "PS ECOG 3"
+	salience 88
+    when
+        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 29 && PS_KARNOFSKY < 50);
+    then
+		$p.setPS_ECOG(3);
+		update($p);  
+end
+
+
+rule "PS ECOG 4"
+	salience 88
+    when
+        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 0 && PS_KARNOFSKY < 30);
+    then
+		$p.setPS_ECOG(4);
+		update($p);  
+end
+
+
+rule "PS ECOG 5"
+	salience 88
+    when
+        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY == 0);
+    then
+		$p.setPS_ECOG(5);
+		update($p);  
+end
+
 //Regras para ver se o paciente é apto para vigilancia
 //NOTAS
 //
 //
 rule "1 regra para determinar se o paciente deve ir para vigilancia"
-	salience 92
+	salience 80
     when
         $p : Paciente(aptoParaViginalancia == -1 && cirrose==1 && (estadio == 'A' || estadio == 'B'));
     then
@@ -172,7 +264,7 @@ rule "1 regra para determinar se o paciente deve ir para vigilancia"
 end
 
 rule "2 regra para determinar se o paciente deve ir para vigilancia"
-	salience 91
+	salience 79
     when
         $p : Paciente(aptoParaViginalancia == -1 && cirrose==1 && estadio == 'C' && aAguardarTransplanteHepático ==1 );
     then
@@ -182,7 +274,7 @@ rule "2 regra para determinar se o paciente deve ir para vigilancia"
 end
 
 rule "3 regra para determinar se o paciente deve ir para vigilancia"
-	salience 90
+	salience 78
     when
         $p : Paciente(aptoParaViginalancia == -1 && cirrose==0 && VHB == 1 && (hepatite_ativa == 1 || historicoCHC == 1) );
     then
@@ -192,7 +284,7 @@ rule "3 regra para determinar se o paciente deve ir para vigilancia"
 end
 
 rule "4 regra para determinar se o paciente deve ir para vigilancia"
-	salience 89
+	salience 77
     when
         $p : Paciente(aptoParaViginalancia == -1 && cirrose==0 && HepatiteCronica == 1 && fibroseHipaticaAvançada == 1 );
     then
@@ -202,7 +294,7 @@ rule "4 regra para determinar se o paciente deve ir para vigilancia"
 end
 
 rule " o paciente nao deve ir para vigilancia"
-	salience 88
+	salience 76
     when
         $p : Paciente(aptoParaViginalancia == -1 );
     then
