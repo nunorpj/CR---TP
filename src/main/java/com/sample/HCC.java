@@ -6,7 +6,6 @@ public class HCC {
 	private int id;
 	private char Stage;
 	private String Tratamento;
-	private Vector<Nodule> Nodolos; //vetor de modulos do paciente
 	private int N; //para linfonodos. O câncer que se espalhou para os linfonodos próximos. 
 	private int M; //para metástase. O câncer que se espalhou para partes distantes do organismo.
 	
@@ -31,19 +30,11 @@ public class HCC {
 	}
 	
 	
-	
-	public Vector<Nodule> getNodolos() {
-		return Nodolos;
-	}
-	
-	public void addNodolos(Nodule nodolo) {
-		Nodolos.add(nodolo);
-	}
+
 	
 	public HCC() {
 		super();
 		Tratamento = null;
-		Nodolos = new Vector<>(); 
 	}
 	
 	

@@ -5,7 +5,6 @@ import java.util.Vector;
 public class Paciente {
 
 	private String Nome; //nome do paciente
-	private Vector<Nodule> Nodolos; //vetor de modulos do paciente
 	private int cirrose;
 	private char estadio; //0 = nada, A,B,C,D
 	private int VHB;
@@ -18,7 +17,17 @@ public class Paciente {
 	private int PS_ECOG;
 	private int aptoParaViginalancia;
 	private int fumaBebe;
+	private int Nnodulos;
+
 	
+	public int getNnodulos() {
+		return Nnodulos;
+	}
+
+	public void setNnodulos(int nnodulos) {
+		Nnodulos = nnodulos;
+	}
+
 	public int getFumaBebe() {
 		return fumaBebe;
 	}
@@ -35,12 +44,6 @@ public class Paciente {
 		Nome = nome;
 	}
 
-	public Vector<Nodule> getNodolos() {
-		return Nodolos;
-	}
-	public void addNodolo(Nodule nodolos) {
-		Nodolos.add(nodolos);
-	}
 
 	
 
@@ -132,6 +135,7 @@ public class Paciente {
 		this.aptoParaViginalancia = -1;
 		this.PS_ECOG =-1;
 		this.PS_KARNOFSKY = -1;
+		this.Nnodulos=-1;
 	}
 
 	public int getPS_KARNOFSKY() {

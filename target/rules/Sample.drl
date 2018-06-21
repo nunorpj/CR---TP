@@ -260,22 +260,72 @@ end
 
 //insert nodulos
 rule "Ecografia inicial"
-	//salience 75
+	salience 75
     when
-
+		$p : Paciente(Nnodulos ==-1);
     then
-
+		System.out.println("Na ecografia inicial foram detetados quantos nodulos?");
+		System.out.print("» ");
+		Scanner input = new Scanner(System.in);
+    	int result = input.nextInt();
+		if(result<=0){
+			System.out.println("O paciente nao tem nenhum nodulo, por isso nao é necessario avançar, obrigado");
+	  		System.exit(0);
+		}
+		//só chega aqui se o numero de nodulos for maior que 0
+		//senao nao passa no if anterior
+		$p.setNnodulos(result);
+		
+		update($p);
         
 end
 
 
+
+
+
 //dizer tanbem qual o exame a fazer
 rule "analise de tamanho e localizacao dos nodulos"
-	//salience 75
+	salience 74
     when
-
+		$p : Paciente(Nnodulos > 0);
+		not Nodule();
     then
+    	Scanner input = new Scanner(System.in);
+    	
+    	int n = $p.getNnodulos();
+    	
+		for(int i=0; i<n; i++){
+			Nodule nodulo = new Nodule(i);
+        	System.out.println("Qual o tamanho do nodulo " + nodulo.getId() + " na ecografia ?");
+			System.out.print("» ");
+			int t = input.nextInt();
+			nodulo.setTamanho(t);
+			
+			System.out.println("Qual a localizacao do nodulo " + nodulo.getId() + " na ecografia ?");
+			System.out.print("» ");
+			
+			String loc = input.nextLine();
+			nodulo.setLocal(loc);
+			insert(nodulo);
+		
+		};
+        
+end
 
+rule "orientar para os exames"
+	salience 73
+    when
+		$n : Nodule();
+    then
+    	if($n.getTamanho()<1)
+    		$n.setExame(0);
+    	else if($n.getTamanho()>1 && $n.getTamanho()<2)
+    	    $n.setExame(3);
+    	else
+    	    $n.setExame(2);
+    	
+    	update($n)
         
 end
 

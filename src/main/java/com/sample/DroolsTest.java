@@ -18,12 +18,9 @@ public class DroolsTest {
 
             // go !
             Paciente pa = new Paciente("MANUCIRCUIT");
-            Nodule n1 = new Nodule(0);
-            Nodule n2 = new Nodule(1);
 
             kSession.insert(pa);
-            kSession.insert(n1);
-            kSession.insert(n2);
+
 
             kSession.fireAllRules();
         } catch (Throwable t) {
