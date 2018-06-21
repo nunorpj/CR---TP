@@ -268,6 +268,8 @@ rule "Ecografia inicial"
         
 end
 
+
+//dizer tanbem qual o exame a fazer
 rule "analise de tamanho e localizacao dos nodulos"
 	//salience 75
     when
@@ -394,7 +396,7 @@ rule "PS KARNOFSKY"
 		if(result>=0 && result<=100){
 			$p.setPS_KARNOFSKY(result);;
 		}else{
-			$p.setaAguardarTransplanteHepático(-1);
+			$p.setPS_KARNOFSKY(-1);
 		}
 		update($p);
         
@@ -455,7 +457,36 @@ end
 
 
 //esta regra vai dizer o estagio conforme o PST E o resto
-rule "Determinar o estgio"
+rule "Sera estagio 0?"
+	salience 50
+    when
+       exists $h : HCC();
+    then
+        System.out.println("Toi?");
+end
+
+rule "Sera estagio A?"
+	salience 50
+    when
+       exists $h : HCC();
+    then
+        System.out.println("Toi?");
+end
+rule "Sera estagio B?"
+	salience 50
+    when
+       exists $h : HCC();
+    then
+        System.out.println("Toi?");
+end
+rule "Sera estagio C?"
+	salience 50
+    when
+       exists $h : HCC();
+    then
+        System.out.println("Toi?");
+end
+rule "Sera estagio D?"
 	salience 50
     when
        exists $h : HCC();
