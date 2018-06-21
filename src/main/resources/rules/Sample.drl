@@ -50,24 +50,7 @@ rule "child-pugh"
         
 end
 
-rule "paciente tem VHB cronico"
-	salience 97
-    when
-        $p : Paciente(VHB == -1);
-    then
-    	System.out.println("o paciente " + $p.getNome()+ " é portador cronico de VHB?");
-		System.out.print("» ");
-		
-		Scanner input = new Scanner(System.in);
-    	String result = input.nextLine();
-		if(result.equalsIgnoreCase("sim")){
-			$p.setVHB(1);
-		}else{
-			$p.setVHB(0);
-		}
-		update($p);
-        
-end
+
 
 
 rule "paciente tem hepatite B ativa"
@@ -89,6 +72,27 @@ rule "paciente tem hepatite B ativa"
 		update($p);
         
 end
+
+
+rule "paciente tem VHB cronico"
+	salience 97
+    when
+        $p : Paciente(VHB == -1 && hepatite_ativa==1 );
+    then
+    	System.out.println("o paciente " + $p.getNome()+ " é portador cronico de VHB?");
+		System.out.print("» ");
+		
+		Scanner input = new Scanner(System.in);
+    	String result = input.nextLine();
+		if(result.equalsIgnoreCase("sim")){
+			$p.setVHB(1);
+		}else{
+			$p.setVHB(0);
+		}
+		update($p);
+        
+end
+
 
 rule "paciente com historia de familia de CHC "
 	salience 96
@@ -163,7 +167,7 @@ rule "paciente esta a aguandar transplate hepatico"
 		update($p);
         
 end
-
+/*
 rule "fuma/bebe"
 	salience 92
 	when
@@ -180,95 +184,10 @@ rule "fuma/bebe"
 		}
 		update($p);
 end
+*/
 //ANTES DA ECOGRAFIA
 
-//este é mais perciso
-rule "PS KARNOFSKY"
-	salience 9
-    when
-        $p : Paciente(PS_KARNOFSKY == -1);
-    then
-    	System.out.println("Indique escala de desempenho Karnofsky do paciente " + $p.getNome()+ " ?");
-		System.out.println("100 - Normal, sem queixas e sem ividencia de doenças");
-		System.out.println("90 - Capaz de efectuar tarefas normais, sintomas ou sinais de doença menores ");
-		System.out.println("80 - Atividade normal com esforço, alguns sinais ou sintomas de doença");
-		System.out.println("70 - Cuida de si mesmo, mas incapaz de realizar uma atividade normal ou de fazer um trabalho ativo");
-		System.out.println("60 - Requer assistência ocasional, mas é capaz de cuidar da maioria das necessidades pessoais");
-		System.out.println("50 - Requer assistência considerável e cuidados médicos freqüentes");
-		System.out.println("40 - Deficente,requer cuidados e assistência especiais");
-		System.out.println("30 - Deficente sério, a hospitalização é indicada, embora a morte não seja iminente");
-		System.out.println("20 - Muito doente,  hospitalização e cuidados de suporte ativos necessários");
-		System.out.println("10 - Moribundo");
-		System.out.println("0 - Morto");
-		System.out.print("» ");
-		Scanner input = new Scanner(System.in);
-    	int result =  input.nextInt();
-		if(result>=0 && result<=100){
-			$p.setPS_KARNOFSKY(result);;
-		}else{
-			$p.setaAguardarTransplanteHepático(-1);
-		}
-		update($p);
-        
-end
 
-rule "PS ECOG 0 "
-	salience 91
-    when
-        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 89);
-    then
-		$p.setPS_ECOG(0);
-		update($p);
-        
-end
-
-rule "PS ECOG 1 "
-	salience 90
-    when
-        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 69 && PS_KARNOFSKY < 90);
-    then
-		$p.setPS_ECOG(1);
-		update($p);
-        
-end
-
-rule "PS ECOG 2 "
-	salience 89
-    when
-        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 49 && PS_KARNOFSKY < 70);
-    then
-		$p.setPS_ECOG(2);
-		update($p);  
-end
-
-rule "PS ECOG 3"
-	salience 88
-    when
-        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 29 && PS_KARNOFSKY < 50);
-    then
-		$p.setPS_ECOG(3);
-		update($p);  
-end
-
-
-rule "PS ECOG 4"
-	salience 88
-    when
-        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 0 && PS_KARNOFSKY < 30);
-    then
-		$p.setPS_ECOG(4);
-		update($p);  
-end
-
-
-rule "PS ECOG 5"
-	salience 88
-    when
-        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY == 0);
-    then
-		$p.setPS_ECOG(5);
-		update($p);  
-end
 
 //Regras para ver se o paciente é apto para vigilancia
 //NOTAS
@@ -436,3 +355,84 @@ rule "HCC-stage"
 end
 
 
+
+//este é mais perciso
+rule "PS KARNOFSKY"
+    when
+        $p : Paciente(PS_KARNOFSKY == -1);
+    then
+    	System.out.println("Indique escala de desempenho Karnofsky do paciente " + $p.getNome()+ " ?");
+		System.out.println("100 - Normal, sem queixas e sem ividencia de doenças");
+		System.out.println("90 - Capaz de efectuar tarefas normais, sintomas ou sinais de doença menores ");
+		System.out.println("80 - Atividade normal com esforço, alguns sinais ou sintomas de doença");
+		System.out.println("70 - Cuida de si mesmo, mas incapaz de realizar uma atividade normal ou de fazer um trabalho ativo");
+		System.out.println("60 - Requer assistência ocasional, mas é capaz de cuidar da maioria das necessidades pessoais");
+		System.out.println("50 - Requer assistência considerável e cuidados médicos freqüentes");
+		System.out.println("40 - Deficente,requer cuidados e assistência especiais");
+		System.out.println("30 - Deficente sério, a hospitalização é indicada, embora a morte não seja iminente");
+		System.out.println("20 - Muito doente,  hospitalização e cuidados de suporte ativos necessários");
+		System.out.println("10 - Moribundo");
+		System.out.println("0 - Morto");
+		System.out.print("» ");
+		Scanner input = new Scanner(System.in);
+    	int result =  input.nextInt();
+		if(result>=0 && result<=100){
+			$p.setPS_KARNOFSKY(result);;
+		}else{
+			$p.setaAguardarTransplanteHepático(-1);
+		}
+		update($p);
+        
+end
+
+rule "PS ECOG 0 "
+    when
+        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 89);
+    then
+		$p.setPS_ECOG(0);
+		update($p);
+        
+end
+
+rule "PS ECOG 1 "
+    when
+        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 69 && PS_KARNOFSKY < 90);
+    then
+		$p.setPS_ECOG(1);
+		update($p);
+        
+end
+
+rule "PS ECOG 2 "
+    when
+        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 49 && PS_KARNOFSKY < 70);
+    then
+		$p.setPS_ECOG(2);
+		update($p);  
+end
+
+rule "PS ECOG 3"
+    when
+        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 29 && PS_KARNOFSKY < 50);
+    then
+		$p.setPS_ECOG(3);
+		update($p);  
+end
+
+
+rule "PS ECOG 4"
+    when
+        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 0 && PS_KARNOFSKY < 30);
+    then
+		$p.setPS_ECOG(4);
+		update($p);  
+end
+
+
+rule "PS ECOG 5"
+    when
+        $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY == 0);
+    then
+		$p.setPS_ECOG(5);
+		update($p);  
+end
