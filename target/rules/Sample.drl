@@ -258,8 +258,31 @@ end
 //mas o exame 3 passa tambem na regra para saber 
 //se o equipamento foi sufisticado
 
+//insert nodulos
+rule "Ecografia inicial"
+	//salience 75
+    when
+
+    then
+
+        
+end
+
+rule "analise de tamanho e localizacao dos nodulos"
+	//salience 75
+    when
+
+    then
+
+        
+end
+
+
+
+
+//alterar esta para comparar com o tamanho inicial
 rule "US"
-	salience 75
+	salience 71
     when
         $n :Nodule(exame==0)
         not HCC();
@@ -345,18 +368,10 @@ rule "Biopsy"
 		update($n);
 end
 
-//Determinar o estagio de HCH
-rule "HCC-stage"
-	salience 50
-    when
-       exists $h : HCC();
-    then
-        System.out.println("Toi?");
-end
+//// CHC
+//
+// NODULO
 
-
-
-//este é mais perciso
 rule "PS KARNOFSKY"
     when
         $p : Paciente(PS_KARNOFSKY == -1);
@@ -429,6 +444,7 @@ rule "PS ECOG 4"
 end
 
 
+
 rule "PS ECOG 5"
     when
         $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY == 0);
@@ -436,3 +452,73 @@ rule "PS ECOG 5"
 		$p.setPS_ECOG(5);
 		update($p);  
 end
+
+
+//esta regra vai dizer o estagio conforme o PST E o resto
+rule "Determinar o estgio"
+	salience 50
+    when
+       exists $h : HCC();
+    then
+        System.out.println("Toi?");
+end
+
+
+// REGRAS ESTAGIO 0
+//
+//
+
+rule ""
+	salience 50
+    when
+       exists $h : HCC();
+    then
+        System.out.println("Toi?");
+end
+
+// REGRAS ESTAGIO A
+//
+//
+rule "a"
+	salience 50
+    when
+       exists $h : HCC();
+    then
+        System.out.println("Toi?");
+end
+
+// REGRAS ESTAGIO B
+//
+//
+rule "b"
+	salience 50
+    when
+       exists $h : HCC();
+    then
+        System.out.println("Toi?");
+end
+
+// REGRAS ESTAGIO C
+//
+//
+rule "c"
+	salience 50
+    when
+       exists $h : HCC();
+    then
+        System.out.println("Toi?");
+end
+
+// REGRAS ESTAGIO D
+//
+//
+rule "d"
+	salience 50
+    when
+       exists $h : HCC();
+    then
+        System.out.println("Toi?");
+end
+
+
+
