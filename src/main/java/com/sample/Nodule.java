@@ -5,8 +5,16 @@ public class Nodule {
 	private float tamanho; //tamanho
 	private int  id;
 	private int exame;
+	private String local;// os nodulos teem de ter o local deles por causa do PNM
+	//Orgãos mais próximos do figado, considerando apenas 3: Visícula,Estomago, Pâncreas
 	
-	// os nodulos teem de ter o local deles por causa do PNM
+	public String getLocal() {
+		return local;
+	}
+
+	public void setLocal(String local) {
+		this.local = local;
+	}
 
 	public int getExame() {
 		return exame;

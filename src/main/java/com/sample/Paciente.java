@@ -17,7 +17,16 @@ public class Paciente {
 	private int PS_KARNOFSKY;
 	private int PS_ECOG;
 	private int aptoParaViginalancia;
+	private int fumaBebe;
 	
+	public int getFumaBebe() {
+		return fumaBebe;
+	}
+
+	public void setFumaBebe(int fumaBebe) {
+		this.fumaBebe = fumaBebe;
+	}
+
 	public String getNome() {
 		return Nome;
 	}

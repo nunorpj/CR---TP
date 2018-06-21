@@ -20,6 +20,8 @@ rule "paciente tem cirrose"
 			$p.setCirrose(1);
 		}else{
 			$p.setCirrose(0);
+			$p.setFibroseHipaticaAvançada(0);
+			$p.setaAguardarTransplanteHepático(0);
 		}
 		update($p);
         
@@ -48,8 +50,8 @@ rule "child-pugh"
         
 end
 
-rule "paciente tem VHB"
-	salience 98
+rule "paciente tem VHB cronico"
+	salience 97
     when
         $p : Paciente(VHB == -1);
     then
@@ -68,12 +70,12 @@ rule "paciente tem VHB"
 end
 
 
-rule "paciente tem hepatite ativa"
-	salience 97
+rule "paciente tem hepatite B ativa"
+	salience 98
     when
         $p : Paciente(hepatite_ativa == -1);
     then
-    	System.out.println("o paciente " + $p.getNome()+ " tem hepatite activa?");
+    	System.out.println("o paciente " + $p.getNome()+ " tem hepatite B activa?");
 		System.out.print("» ");
 		
 		Scanner input = new Scanner(System.in);
@@ -82,6 +84,7 @@ rule "paciente tem hepatite ativa"
 			$p.setHepatite_ativa(1);
 		}else{
 			$p.setHepatite_ativa(0);
+			$p.setVHB(0);
 		}
 		update($p);
         
@@ -105,12 +108,12 @@ rule "paciente com historia de familia de CHC "
         
 end
 
-rule "paciente tem hepatite cronica "
+rule "paciente tem hepatite cronica C"
 	salience 95
     when
         $p : Paciente(HepatiteCronica == -1);
     then
-    	System.out.println("o paciente " + $p.getNome()+ " tem hepatite crónica?");
+    	System.out.println("o paciente " + $p.getNome()+ " tem hepatite crónica C?");
 		System.out.print("» ");
 		Scanner input = new Scanner(System.in);
     	String result = input.nextLine();
@@ -161,9 +164,27 @@ rule "paciente esta a aguandar transplate hepatico"
         
 end
 
+rule "fuma/bebe"
+	salience 92
+	when
+		$p : Paciente(fumaBebe == -1);
+	then
+		System.out.println("o paciente " + $p.getNome()+ " fuma ou bebe?");
+		System.out.print("» ");
+		Scanner input = new Scanner(System.in);
+    	String result = input.nextLine();
+		if(result.equalsIgnoreCase("sim")){
+			$p.setFumaBebe(1);
+		}else{
+			$p.setFumaBebe(0);
+		}
+		update($p);
+end
+//ANTES DA ECOGRAFIA
+
 //este é mais perciso
 rule "PS KARNOFSKY"
-	salience 92
+	salience 9
     when
         $p : Paciente(PS_KARNOFSKY == -1);
     then
