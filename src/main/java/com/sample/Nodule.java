@@ -40,7 +40,7 @@ public class Nodule {
 	}
 	public Nodule(int id) {
 		super();
-		this.exame=0;//US
+		this.exame=-1;//US
 		this.id = id;
 	}
 	

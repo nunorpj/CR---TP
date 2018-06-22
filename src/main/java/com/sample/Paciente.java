@@ -6,7 +6,7 @@ public class Paciente {
 
 	private String Nome; //nome do paciente
 	private int cirrose;
-	private char estadio; //0, A,B,C,D, 1 nãda
+	private char estadio; //0, A,B,C,D, 1 nãda (child-pugh)
 	private int VHB;
 	private int hepatite_ativa;
 	private int historicoCHC; //historico de familiar com chc

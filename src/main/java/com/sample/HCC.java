@@ -3,11 +3,10 @@ package com.sample;
 import java.util.Vector;
 
 public class HCC {
-	private int id;
-	private char Stage;
+	private char Stage;// 0 , A,B,C, D, 1 se ainda nao tiver sido avalidado
 	private String Tratamento;
-	private int N; //para linfonodos. O câncer que se espalhou para os linfonodos próximos. Legenda: 1->SIM; 0->Não; -1->0
-	private int M; //para metástase. O câncer que se espalhou para partes distantes do organismo. Legenda: 1->SIM; 0->Não; -1->0
+	private int N; //para linfonodos. O câncer que se espalhou para os linfonodos próximos. Legenda: 1->SIM; 0->Não; -1->nao avaliado
+	private int M; //para metástase. O câncer que se espalhou para partes distantes do organismo. Legenda: 1->SIM; 0->Não; -1->nao avaliado
 	
 	
 	public int getN() {
@@ -22,12 +21,7 @@ public class HCC {
 	public void setM(int m) {
 		M = m;
 	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
+
 	public char getStage() {
 		return Stage;
 	}
@@ -46,7 +40,10 @@ public class HCC {
 	
 	public HCC() {
 		super();
-		Tratamento = null;
+		this.Tratamento = "VAZIO";
+		this.Stage = '1'; //nada ainda
+		this.M= -1;//nao avaliado ainda
+		this.N=-1;//nao avaliado ainda
 	}
 	
 	

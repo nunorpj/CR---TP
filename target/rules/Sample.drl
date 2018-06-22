@@ -305,7 +305,7 @@ rule "analise de tamanho e localizacao dos nodulos"
 			System.out.println("Qual a localizacao do nodulo " + nodulo.getId() + " na ecografia ?");
 			System.out.print("» ");
 			
-			input.next();
+			input = new Scanner(System.in);
 			String loc = input.nextLine();
 			nodulo.setLocal(loc);
 			insert(nodulo);
@@ -319,13 +319,18 @@ rule "orientar para os exames"
     when
 		$n : Nodule(exame == -1);
     then
-    	if($n.getTamanho()<1)
+    	if($n.getTamanho()<1){
     		$n.setExame(0);
-    	else if($n.getTamanho()>1 && $n.getTamanho()<2)
+    		System.out.println("O paciente necessita de uma US");
+    	}else if($n.getTamanho()>1 && $n.getTamanho()<2){
     	    $n.setExame(3);
-    	else
+    	   	System.out.println("O paciente necessita de Realizar TC ou RM dinamica com contraste");
+    	    
+    	}else{
     	    $n.setExame(2);
-    	
+    	   	System.out.println("O paciente necessita de Realizar TC ou RM dinamica com contraste");
+    	    
+    	}
     	update($n)
         
 end
@@ -340,20 +345,21 @@ rule "US"
         $n :Nodule(exame==0)
         not HCC();
     then
-        System.out.println("Qual o tamanho do nodulo " + $n.getId() + " na ecografia ?");
+        System.out.println("US ao nodulo " + $n.getId() + " !");
+        System.out.println("Qual o tamanho do nodulo " + $n.getId() + " no US ?");
     	Scanner input = new Scanner(System.in);
     	Float t = input.nextFloat();
     	$n.setTamanho(t);
     	if(t<1){
     		$n.setExame(1);
-    		System.out.println("Estavel, reptir ecografia daqui a 4 meses");
+    		System.out.println("Estavel, reptir US daqui a 4 meses");
     	}else if(t>1 &&t<2){
     		$n.setExame(3);//preciso de vereficar se o equipamento é sofisticado
-        	System.out.println("Nodulo com" + t + "cm é necessario um CT ou RM Dinamica com contraste");
+        	System.out.println("Nodulo com " + t + "cm é necessario um CT ou RM Dinamica com contraste");
         	System.out.println("Recomendado centro de excelencia");
         }else if(t>2){
        	 	$n.setExame(2);
-       	 	System.out.println("Nodulo com" + t + "cm é necessario um CT ou RM Dinamica com contraste");
+       	 	System.out.println("Nodulo com " + t + "cm é necessario um CT ou RM Dinamica com contraste");
        	 }
         update($n);
         
@@ -403,7 +409,7 @@ rule "equipamento sofisticado"
 		update($n);
 end
 rule "Biopsy"
-	salience 60
+	salience 68
     when
         $n :Nodule(exame==4);
         not HCC();
@@ -424,8 +430,18 @@ end
 //// CHC
 //
 // NODULO
+rule "CHC"
+	salience 60
+    when
+        exists HCC();
+    then
+            System.out.println("Vamos agora avaliar o estádio do CHC!");
+
+end
 
 rule "PS KARNOFSKY"
+	salience 59
+
     when
         $p : Paciente(PS_KARNOFSKY == -1);
     then
@@ -454,6 +470,8 @@ rule "PS KARNOFSKY"
 end
 
 rule "PS ECOG 0 "
+	salience 58
+
     when
         $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 89);
     then
@@ -463,6 +481,8 @@ rule "PS ECOG 0 "
 end
 
 rule "PS ECOG 1 "
+	salience 57
+
     when
         $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 69 && PS_KARNOFSKY < 90);
     then
@@ -472,6 +492,8 @@ rule "PS ECOG 1 "
 end
 
 rule "PS ECOG 2 "
+	salience 56
+
     when
         $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 49 && PS_KARNOFSKY < 70);
     then
@@ -480,6 +502,8 @@ rule "PS ECOG 2 "
 end
 
 rule "PS ECOG 3"
+	salience 55
+
     when
         $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 29 && PS_KARNOFSKY < 50);
     then
@@ -489,6 +513,8 @@ end
 
 
 rule "PS ECOG 4"
+	salience 54
+
     when
         $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY > 0 && PS_KARNOFSKY < 30);
     then
@@ -499,6 +525,8 @@ end
 
 
 rule "PS ECOG 5"
+	salience 53
+
     when
         $p : Paciente(PS_ECOG==-1 && PS_KARNOFSKY == 0);
     then
@@ -507,10 +535,47 @@ rule "PS ECOG 5"
 end
 
 
+//Regra para avaliar o N!
+//
+//
+
+rule "N1"
+	salience 52
+
+    when
+    	exists HCC(N==-1);// N ainda nao havaliado
+   		$h : HCC();
+   		exists (Nodule(local=="Visícula") || Nodule(local=="Estomago") || Nodule(local=="Pâncreas") )
+    then
+    	$h.setN(1);
+    	update($h);
+end
+
+//Regra para avaliar o M!
+//
+//
+
+rule "M1"
+	salience 51
+	
+    when
+    	exists HCC(M==-1);// M ainda nao havaliado
+   		$h : HCC();
+   		exists (Nodule(local!="Visícula") && Nodule(local!="Estomago") && Nodule(local!="Pâncreas") )
+    then
+    	$h.setM(1);
+    	update($h);
+ 
+end
+
+
+
+
+
 //esta regra vai dizer o estagio conforme o PST E o resto
 
 rule "Sera estagio 0?"
-	salience 50
+	salience 45
     when
        exists $h : HCC();
        $p : Paciente(estadio == '1');
