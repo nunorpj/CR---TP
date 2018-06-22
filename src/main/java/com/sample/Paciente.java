@@ -19,8 +19,17 @@ public class Paciente {
 	private int fumaBebe;
 	private int Nnodulos;
 	private int Tnodulos[];
+	private int PressaoPortal;
 	
 	
+
+	public int getPressaoPortal() {
+		return PressaoPortal;
+	}
+
+	public void setPressaoPortal(int pressaoPortal) {
+		PressaoPortal = pressaoPortal;
+	}
 
 	public int getTnodulos(int i) {
 		return Tnodulos[i];

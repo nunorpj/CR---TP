@@ -595,7 +595,12 @@ rule "Sera estagio A?"
 	when
     	exists HCC();
     	$h : HCC(stage=='1');
+    	forall($n:Nodule(tamanho < 3))
+    	$p: Paciente(PS_ECOG==0 && (Nnodulos>0 && Nnodulos<=3) && (estadio=='A' || estadio=='B'));	
     then
+    	System.out.println("O paciente "+$p.getNome()+" está no Estadio Inicial (A)");
+        $h.setStage('A');
+        update($h);
 
 end
 rule "Sera estagio B?"
@@ -603,23 +608,33 @@ rule "Sera estagio B?"
     when
     	exists HCC();
     	$h : HCC(stage=='1')
+    	$p : Paciente(PS_ECOG>=0 && (estadio=='A' || estadio=='B') && Nnodulos>3)
     then
-
+		System.out.println("O paciente "+$p.getNome()+" está no Estadio Intermédio(B)");
+        $h.setStage('B');
+        update($h);
 end
 rule "Sera estagio C?"
 	salience 47
     when
     	exists HCC();
-    	$h : HCC(stage=='1')
+    	$h : HCC(stage=='1' && (N==1 || M==1))
+    	$p : Paciente((PS_ECOG==1 || PS_ECOG==2) && (estadio=='A' || estadio=='B'))    	
     then
-
+		System.out.println("O paciente "+$p.getNome()+" está no Estadio Avançado (C)");
+        $h.setStage('C');
+        update($h);
 end
 rule "Sera estagio D?"
 	salience 46
     when
     	exists HCC();
     	$h : HCC(stage=='1')
+    	$p : Paciente(PS_ECOG>=2 && estadio == 'C')
     then
+    	System.out.println("O paciente "+$p.getNome()+" está no Estadio Terminal (D)");
+        $h.setStage('D');
+        update($h);
 
 end
 
@@ -628,23 +643,55 @@ end
 //
 //
 
-rule "Estadio 0"
+rule "Tratamento Estadio 0"
+	salience 45
     when
-       exists $h : HCC();
+       $h : HCC(stage=='0');
        $p: Paciente();
     then
-
+		System.out.println("O paciente "+$p.getNome()+" tem um Carcinoma que deve ser removido o mais rápido possível.");
 end
 
 // REGRAS ESTAGIO A
 //
 //
-rule "a"
+//Perguntas complementares a esta regra
+rule "pressão portal"
+	salience 46
+	when 
+		$h : HCC(stage=='A');
+		$p : Paciente(Nnodulos==1 && PressaoPortal==-1);
+	then
+		System.out.println("O pacinete "+$p.getNome()+" tem pressão portal aumentada?");
+		System.out.print("» ");
+		
+		Scanner input = new Scanner(System.in);
+    	String result = input.nextLine();
+		
+		if(result.equalsIgnoreCase("sim")){
+			$p:setPressaoPortal(1);
+		}else{
+			$p:setPressaoPortal(0);
+		}
+		update($p);
+end
+rule "Tratamento Estado A"
 	salience 50
     when
-       exists $h : HCC();
+       $h : HCC(stage=='A');
+       $p: Paciente();
     then
-        System.out.println("Toi?");
+    	if($p.getNnodulos()==1){
+    		if($p.getPressaoPortal()==0){
+    			System.out.println("O paciente precisa de uma Ressecção");
+    		}else{
+    			if($p.getHepatite_ativa()==1 || $p.getHepatiteCronica()==1){
+    				System.out.println("O paciente precisa de uma Ablação Percutânea");
+    			}else{
+    				System.out.println("O paciente precisa de um Transplante");
+    			}
+    		}
+    	}
 end
 
 // REGRAS ESTAGIO B
