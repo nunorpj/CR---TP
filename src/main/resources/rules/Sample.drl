@@ -299,12 +299,13 @@ rule "analise de tamanho e localizacao dos nodulos"
 			Nodule nodulo = new Nodule(i);
         	System.out.println("Qual o tamanho do nodulo " + nodulo.getId() + " na ecografia ?");
 			System.out.print("» ");
-			int t = input.nextInt();
+			float t = input.nextFloat();
 			nodulo.setTamanho(t);
 			
 			System.out.println("Qual a localizacao do nodulo " + nodulo.getId() + " na ecografia ?");
 			System.out.print("» ");
 			
+			input.next();
 			String loc = input.nextLine();
 			nodulo.setLocal(loc);
 			insert(nodulo);
@@ -316,7 +317,7 @@ end
 rule "orientar para os exames"
 	salience 73
     when
-		$n : Nodule();
+		$n : Nodule(exame == -1);
     then
     	if($n.getTamanho()<1)
     		$n.setExame(0);
