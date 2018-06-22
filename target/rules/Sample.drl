@@ -618,7 +618,7 @@ rule "Sera estagio B?" //feito
         $h.setStage('B');
         update($h);
 end
-rule "Sera estagio C?" //feito
+rule "Sera estagio C?" //feito missing erp«cao portal
 	salience 47
     when
     	exists HCC();
@@ -660,8 +660,8 @@ end
 //
 //
 //Perguntas complementares a esta regra
-rule "pressão portal"
-	salience 46
+rule "pressão portal"//feito
+	salience 44
 	when 
 		$h : HCC(stage=='A');
 		$p : Paciente(Nnodulos==1 && PressaoPortal==-1);
@@ -679,8 +679,8 @@ rule "pressão portal"
 		}
 		update($p);
 end
-rule "Tratamento Estado A : Resseçao"
-	salience 50
+rule "Tratamento Estado A : Resseçao" //feito
+	salience 43
     when
        $h : HCC(stage=='A');
        $p: Paciente(PressaoPortal==0 && Tratamento == "VAZIO");
@@ -690,37 +690,80 @@ rule "Tratamento Estado A : Resseçao"
 		update($p);
 end
 
+rule "Doenças associadas" //testar
+	salience 42
+	when 
+		$h : HCC(stage=='A');
+		
+		
+		
+		( ($ns :	ArrayList(size>=2) from collect (Nodule(tamanho<=3)) && $p : Paciente(DoencasAssociadas==-1)  || $p : Paciente(PressaoPortal==1 && DoencasAssociadas==-1) ) )
+	then
+		System.out.println("O pacinete "+$p.getNome()+" tem alguma doença associada?");
+		System.out.print("» ");
+		
+		Scanner input = new Scanner(System.in);
+    	String result = input.nextLine();
+		
+		if(result.equalsIgnoreCase("sim")){
+			$p.setDoencasAssociadas(1);
+			System.out.println("O paciente precisa de uma Ablacação percutânea");
+			$p.setTratamento("Ablacação percutânea");
+			
+		}else{
+			$p.setDoencasAssociadas(0);
+			System.out.println("O paciente precisa de um Transplante");
+			$p.setTratamento("Transplante");
+		}
+		update($p);
+end
+
+
+
+
 // REGRAS ESTAGIO B
 //
 //
-rule "b"
-	salience 50
+rule "Tratamento Quimioembolizacao"
+	salience 40
     when
-       exists $h : HCC();
+       $h : HCC(stage=='B');
+       $p: Paciente(Tratamento == "VAZIO");    
+    
     then
-        System.out.println("Toi?");
+        System.out.println("O paciente precisa de Quimioembolização");
+        $p.setTratamento("Quimioembolização");
+        update($p);
 end
 
 // REGRAS ESTAGIO C
 //
 //
-rule "c"
-	salience 50
+rule "tratamento Sorafenib"
+	salience 30
     when
-       exists $h : HCC();
+       $h : HCC(stage=='C');
+       $p: Paciente(Tratamento == "VAZIO");    
+    
     then
-        System.out.println("Toi?");
+        System.out.println("O paciente precisa de Sorafenib");
+        $p.setTratamento("Sorafenib");
+        update($p);
 end
 
 // REGRAS ESTAGIO D
 //
 //
-rule "d"
-	salience 50
+rule "Tratamento Sintomático"
+	salience 20
     when
-       exists $h : HCC();
+       $h : HCC(stage=='D');
+       $p: Paciente(Tratamento == "VAZIO");    
+    
     then
-        System.out.println("Toi?");
+        System.out.println("O paciente precisa de Sintomático");
+        $p.setTratamento("Sintomático");
+        update($p);
 end
 
 

@@ -21,7 +21,16 @@ public class Paciente {
 	private int Tnodulos[];
 	private int PressaoPortal;//-1 ainda nada, 0 normal, 1 aumentada
 	private String Tratamento;
+	private int DoencasAssociadas;
 	
+	
+	
+	public int getDoencasAssociadas() {
+		return DoencasAssociadas;
+	}
+	public void setDoencasAssociadas(int doencasAssociadas) {
+		DoencasAssociadas = doencasAssociadas;
+	}
 	public String getTratamento() {
 		return Tratamento;
 	}
@@ -165,6 +174,7 @@ public class Paciente {
 		this.PS_KARNOFSKY = -1;
 		this.Nnodulos=-1;
 		this.Tratamento = "VAZIO";
+		this.DoencasAssociadas=-1;
 
 	}
 
