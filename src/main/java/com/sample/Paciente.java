@@ -19,17 +19,8 @@ public class Paciente {
 	private int fumaBebe;
 	private int Nnodulos;
 	private int Tnodulos[];
-	private char childPugh; //A,B,C 
 	
 	
-
-	public char getChildPugh() {
-		return childPugh;
-	}
-
-	public void setChildPugh(char childPugh) {
-		this.childPugh = childPugh;
-	}
 
 	public int getTnodulos(int i) {
 		return Tnodulos[i];
