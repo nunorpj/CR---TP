@@ -4,7 +4,6 @@ import java.util.Vector;
 
 public class HCC {
 	private char Stage;// 0 , A,B,C, D, 1 se ainda nao tiver sido avalidado
-	private String Tratamento;
 	private int N; //para linfonodos. O câncer que se espalhou para os linfonodos próximos. Legenda: 1->SIM; 0->Não; -1->nao avaliado
 	private int M; //para metástase. O câncer que se espalhou para partes distantes do organismo. Legenda: 1->SIM; 0->Não; -1->nao avaliado
 	
@@ -28,19 +27,11 @@ public class HCC {
 	public void setStage(char stage) {
 		Stage = stage;
 	}
-	public String getTratamento() {
-		return Tratamento;
-	}
-	public void setTratamento(String tratamento) {
-		Tratamento = tratamento;
-	}
-	
-	
+
 
 	
 	public HCC() {
 		super();
-		this.Tratamento = "VAZIO";
 		this.Stage = '1'; //nada ainda
 		this.M= -1;//nao avaliado ainda
 		this.N=-1;//nao avaliado ainda

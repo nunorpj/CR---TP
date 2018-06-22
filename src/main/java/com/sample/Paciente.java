@@ -19,7 +19,15 @@ public class Paciente {
 	private int fumaBebe;
 	private int Nnodulos;
 	private int Tnodulos[];
-	private int PressaoPortal;
+	private int PressaoPortal;//-1 ainda nada, 0 normal, 1 aumentada
+	private String Tratamento;
+	
+	public String getTratamento() {
+		return Tratamento;
+	}
+	public void setTratamento(String tratamento) {
+		Tratamento = tratamento;
+	}
 	
 	
 
@@ -156,6 +164,8 @@ public class Paciente {
 		this.PS_ECOG =-1;
 		this.PS_KARNOFSKY = -1;
 		this.Nnodulos=-1;
+		this.Tratamento = "VAZIO";
+
 	}
 
 	public int getPS_KARNOFSKY() {

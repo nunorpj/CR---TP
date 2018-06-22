@@ -576,7 +576,7 @@ end
 
 
 
-rule "Sera estagio 0?"
+rule "Sera estagio 0?"//feito
 	salience 50
     when
     	
@@ -590,31 +590,35 @@ rule "Sera estagio 0?"
         update($h);
 end
 
-rule "Sera estagio A?"
+rule "Sera estagio A?"//correto agora
 	salience 49
 	when
     	exists HCC();
     	$h : HCC(stage=='1');
-    	forall($n:Nodule(tamanho < 3))
-    	$p: Paciente(PS_ECOG==0 && (Nnodulos>0 && Nnodulos<=3) && (estadio=='A' || estadio=='B'));	
+    	$p: Paciente(PS_ECOG==0 &&(estadio=='A' || estadio=='B'));	
+    	$ns :	ArrayList(size<=3 && size>=1)
+    			from collect (Nodule(tamanho<=3))
     then
     	System.out.println("O paciente "+$p.getNome()+" está no Estadio Inicial (A)");
         $h.setStage('A');
         update($h);
 
 end
-rule "Sera estagio B?"
+
+
+
+rule "Sera estagio B?" //feito
 	salience 48
     when
     	exists HCC();
     	$h : HCC(stage=='1')
-    	$p : Paciente(PS_ECOG>=0 && (estadio=='A' || estadio=='B') && Nnodulos>3)
+    	$p : Paciente(PS_ECOG==0 && (estadio=='A' || estadio=='B') && Nnodulos>3)
     then
 		System.out.println("O paciente "+$p.getNome()+" está no Estadio Intermédio(B)");
         $h.setStage('B');
         update($h);
 end
-rule "Sera estagio C?"
+rule "Sera estagio C?" //feito
 	salience 47
     when
     	exists HCC();
@@ -625,12 +629,12 @@ rule "Sera estagio C?"
         $h.setStage('C');
         update($h);
 end
-rule "Sera estagio D?"
+rule "Sera estagio D?"//feito
 	salience 46
     when
     	exists HCC();
     	$h : HCC(stage=='1')
-    	$p : Paciente(PS_ECOG>=2 && estadio == 'C')
+    	$p : Paciente(PS_ECOG > 2 && estadio == 'C')
     then
     	System.out.println("O paciente "+$p.getNome()+" está no Estadio Terminal (D)");
         $h.setStage('D');
@@ -643,7 +647,7 @@ end
 //
 //
 
-rule "Tratamento Estadio 0"
+rule "Tratamento Estadio 0"//feito
 	salience 45
     when
        $h : HCC(stage=='0');
@@ -669,29 +673,21 @@ rule "pressão portal"
     	String result = input.nextLine();
 		
 		if(result.equalsIgnoreCase("sim")){
-			$p:setPressaoPortal(1);
+			$p.setPressaoPortal(1);
 		}else{
-			$p:setPressaoPortal(0);
+			$p.setPressaoPortal(0);
 		}
 		update($p);
 end
-rule "Tratamento Estado A"
+rule "Tratamento Estado A : Resseçao"
 	salience 50
     when
        $h : HCC(stage=='A');
-       $p: Paciente();
+       $p: Paciente(PressaoPortal==0 && Tratamento == "VAZIO");
     then
-    	if($p.getNnodulos()==1){
-    		if($p.getPressaoPortal()==0){
-    			System.out.println("O paciente precisa de uma Ressecção");
-    		}else{
-    			if($p.getHepatite_ativa()==1 || $p.getHepatiteCronica()==1){
-    				System.out.println("O paciente precisa de uma Ablação Percutânea");
-    			}else{
-    				System.out.println("O paciente precisa de um Transplante");
-    			}
-    		}
-    	}
+		System.out.println("O paciente precisa de uma Ressecção");
+		$p.setTratamento("Ressecção");
+		update($p);
 end
 
 // REGRAS ESTAGIO B
