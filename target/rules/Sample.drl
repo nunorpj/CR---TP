@@ -508,41 +508,62 @@ end
 
 
 //esta regra vai dizer o estagio conforme o PST E o resto
+
 rule "Sera estagio 0?"
 	salience 50
     when
        exists $h : HCC();
+       $p : Paciente(estadio == '1');
     then
-        System.out.println("Toi?");
+    	if($p.getNnodulos() == 1 && $p.getPS_ECOG() == 0 && $p.getChildPugh() == 'A'){
+        	System.out.println("O paciente "+$p.getNome()+" está no Estadio muito inicial (0)");
+        	$p.setEstadio('0');
+        }
 end
-
 rule "Sera estagio A?"
 	salience 50
     when
-       exists $h : HCC();
+    	exists $h : HCC();
+    	$p : Paciente(estadio == '1');
     then
-        System.out.println("Toi?");
+    	if(($p.getNnodulos() >= 1 && $p.getNnodulos() <= 3) && $p.getPS_ECOG() == 0 && ($p.getChildPugh() == 'A' || $p.getChildPugh() == 'B')){
+        	System.out.println("O paciente "+$p.getNome()+" está no Estadio Inicial (A) ");
+        	$p.setEstadio('A');
+        }
 end
 rule "Sera estagio B?"
 	salience 50
     when
        exists $h : HCC();
+       $p : Paciente(estadio == '1');
     then
-        System.out.println("Toi?");
+    	if($p.getNnodulos() > 3  && $p.getPS_ECOG() == 0 && ($p.getChildPugh() == 'A' || $p.getChildPugh() == 'B')){
+        	System.out.println("O paciente "+$p.getNome()+" está no Estadio Intermedio (B) ");
+        	$p.setEstadio('B');
+        }
 end
 rule "Sera estagio C?"
 	salience 50
     when
-       exists $h : HCC();
+    	exists $h : HCC();
+    	$p : Paciente(estadio == '1');
+    	$h : HCC();
     then
-        System.out.println("Toi?");
+    	if(($h.getN()==1 || $h.getM()==1) && ($p.getPS_ECOG() >= 1 && $p.getPS_ECOG() <= 2) && ($p.getChildPugh() == 'A' || $p.getChildPugh() == 'B')){
+        	System.out.println("O paciente "+$p.getNome()+" está no Estadio Avançado (C) ");
+        	$p.setEstadio('C');
+        }
 end
 rule "Sera estagio D?"
 	salience 50
     when
        exists $h : HCC();
+       $p : Paciente(estadio == '1');
     then
-        System.out.println("Toi?");
+    	if($p.getPS_ECOG() > 2 && $p.getChildPugh() == 'C'){
+        	System.out.println("O paciente "+$p.getNome()+" está no Estadio Terminal (D) ");
+        	$p.setEstadio('D');
+        }
 end
 
 
@@ -550,12 +571,15 @@ end
 //
 //
 
-rule ""
-	salience 50
+rule "Estadio 0"
     when
        exists $h : HCC();
+       $p: Paciente();
     then
-        System.out.println("Toi?");
+    	if($p.getEstadio() == '0'){
+    		System.out.println("O paciente "+$p.getNome()+" Tem um Carcinoma in Situ");
+    		System.out.println("Tratamento: Deve submeterse a cirugia rapido.");
+    	}
 end
 
 // REGRAS ESTAGIO A

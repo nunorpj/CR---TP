@@ -6,7 +6,7 @@ public class Paciente {
 
 	private String Nome; //nome do paciente
 	private int cirrose;
-	private char estadio; //0 = nada, A,B,C,D
+	private char estadio; //0, A,B,C,D, 1 nãda
 	private int VHB;
 	private int hepatite_ativa;
 	private int historicoCHC; //historico de familiar com chc
@@ -18,8 +18,28 @@ public class Paciente {
 	private int aptoParaViginalancia;
 	private int fumaBebe;
 	private int Nnodulos;
-
+	private int Tnodulos[];
+	private char childPugh; //A,B,C 
 	
+	
+
+	public char getChildPugh() {
+		return childPugh;
+	}
+
+	public void setChildPugh(char childPugh) {
+		this.childPugh = childPugh;
+	}
+
+	public int getTnodulos(int i) {
+		return Tnodulos[i];
+	}
+
+	public void setTnodulos(int tnodulos, int i) {
+		
+		Tnodulos[i] = tnodulos;
+	}
+
 	public int getNnodulos() {
 		return Nnodulos;
 	}

@@ -6,10 +6,22 @@ public class HCC {
 	private int id;
 	private char Stage;
 	private String Tratamento;
-	private int N; //para linfonodos. O câncer que se espalhou para os linfonodos próximos. 
-	private int M; //para metástase. O câncer que se espalhou para partes distantes do organismo.
+	private int N; //para linfonodos. O câncer que se espalhou para os linfonodos próximos. Legenda: 1->SIM; 0->Não; -1->0
+	private int M; //para metástase. O câncer que se espalhou para partes distantes do organismo. Legenda: 1->SIM; 0->Não; -1->0
 	
 	
+	public int getN() {
+		return N;
+	}
+	public void setN(int n) {
+		N = n;
+	}
+	public int getM() {
+		return M;
+	}
+	public void setM(int m) {
+		M = m;
+	}
 	public int getId() {
 		return id;
 	}
