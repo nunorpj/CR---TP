@@ -573,8 +573,12 @@ end
 rule "Estadio 0"
     when
        exists $h : HCC();
+       $p: Paciente();
     then
-        System.out.println("Toi?");
+    	if($p.getEstadio() == '0'){
+    		System.out.println("O paciente "+$p.getNome()+" Tem um Carcinoma in Situ");
+    		System.out.println("Tratamento: Deve submeterse a cirugia rapido.");
+    	}
 end
 
 // REGRAS ESTAGIO A
