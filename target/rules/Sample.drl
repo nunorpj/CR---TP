@@ -378,7 +378,7 @@ rule "ct e rm"
 		if(nPositives == 0){
 			System.out.println("É necessario uma Biopsia !");
 			$n.setExame(4);
-		}else if(nPositives>=2 || ($n.getExame() ==2  && nPositives >= 1)){
+		}else if(nPositives==2 || ($n.getExame()==2 && nPositives == 1)){
 			System.out.println("É HCC!");
 			$n.setExame(5);
 			insert(new HCC());
@@ -601,6 +601,7 @@ rule "Sera estagio A?"//correto agora
     then
     	System.out.println("O paciente "+$p.getNome()+" está no Estadio Inicial (A)");
         $h.setStage('A');
+        $p.setPressaoPortal(-1);
         update($h);
 
 end
@@ -694,28 +695,31 @@ rule "Doenças associadas" //testar
 	salience 42
 	when 
 		$h : HCC(stage=='A');
-		
-		
-		
 		( ($ns :	ArrayList(size>=2) from collect (Nodule(tamanho<=3)) && $p : Paciente(DoencasAssociadas==-1)  || $p : Paciente(PressaoPortal==1 && DoencasAssociadas==-1) ) )
 	then
-		System.out.println("O pacinete "+$p.getNome()+" tem alguma doença associada?");
-		System.out.print("» ");
-		
-		Scanner input = new Scanner(System.in);
-    	String result = input.nextLine();
-		
-		if(result.equalsIgnoreCase("sim")){
+		if($p.getHepatite_ativa()==1 || $p.getHepatiteCronica()==1){
 			$p.setDoencasAssociadas(1);
 			System.out.println("O paciente precisa de uma Ablacação percutânea");
 			$p.setTratamento("Ablacação percutânea");
-			
 		}else{
-			$p.setDoencasAssociadas(0);
-			System.out.println("O paciente precisa de um Transplante");
-			$p.setTratamento("Transplante");
+			System.out.println("O pacinete "+$p.getNome()+" tem alguma doença associada?");
+			System.out.print("» ");
+		
+			Scanner input = new Scanner(System.in);
+    		String result = input.nextLine();
+		
+			if(result.equalsIgnoreCase("sim")){
+				$p.setDoencasAssociadas(1);
+				System.out.println("O paciente precisa de uma Ablacação percutânea");
+				$p.setTratamento("Ablacação percutânea");
+			
+			}else{
+				$p.setDoencasAssociadas(0);
+				System.out.println("O paciente precisa de um Transplante");
+				$p.setTratamento("Transplante");
+			}
+			update($p);
 		}
-		update($p);
 end
 
 
