@@ -148,11 +148,13 @@ rule "paciente tem fibrose hepatica avançada "
     when
         $p : Paciente(fibroseHipaticaAvançada == -1);
     then
-    	System.out.println("o paciente " + $p.getNome()+ " tem fibrose hepatica avancada?");
-		System.out.print("» ");
-		Scanner input = new Scanner(System.in);
-    	String result = input.nextLine();
-		if(result.equalsIgnoreCase("sim")){
+    	Object[] options = {"Sim","Não"};
+		int op = JOptionPane.showOptionDialog(null, "O Paciente " + $p.getNome()+ " tem Fibrose Hepatica Avançada?", "Fibrose Hepatica Avançada",
+    		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+    		null,options,options[1]);
+    		
+    		
+		if(op==0){
 			$p.setFibroseHipaticaAvançada(1);
 		}else{
 			$p.setFibroseHipaticaAvançada(0);
@@ -167,11 +169,12 @@ rule "paciente esta a aguandar transplate hepatico"
     when
         $p : Paciente(aAguardarTransplanteHepático == -1);
     then
-    	System.out.println("o paciente " + $p.getNome()+ " esta a aguandar transplate hepatico?");
-		System.out.print("» ");
-		Scanner input = new Scanner(System.in);
-    	String result = input.nextLine();
-		if(result.equalsIgnoreCase("sim")){
+    	Object[] options = {"Sim","Não"};
+		int op = JOptionPane.showOptionDialog(null, "O Paciente " + $p.getNome()+ " esta a aguardar Transplante Hepático?", "Transplante Hepático",
+    		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+    		null,options,options[1]);
+    		
+		if(op==0){
 			$p.setaAguardarTransplanteHepático(1);
 		}else{
 			$p.setaAguardarTransplanteHepático(0);
@@ -210,8 +213,8 @@ rule "1 regra para determinar se o paciente deve ir para vigilancia"
     when
         $p : Paciente(aptoParaViginalancia == -1 && cirrose==1 && (estadio == 'A' || estadio == 'B'));
     then
-        System.out.println("o "+$p.getNome() + " deve ir para vigilancia");
-        $p.setAptoParaViginalancia(1);
+		JOptionPane.showMessageDialog(null, "O paciente " + $p.getNome()+ " deve ir para Vigilancia!", "Vigilancia",JOptionPane.WARNING_MESSAGE);        
+		$p.setAptoParaViginalancia(1);
 		update($p); 
 end
 
@@ -220,7 +223,7 @@ rule "2 regra para determinar se o paciente deve ir para vigilancia"
     when
         $p : Paciente(aptoParaViginalancia == -1 && cirrose==1 && estadio == 'C' && aAguardarTransplanteHepático ==1 );
     then
-        System.out.println("o "+$p.getNome() + " deve ir para vigilancia");
+		JOptionPane.showMessageDialog(null, "O paciente " + $p.getNome()+ " deve ir para Vigilancia!", "Vigilancia",JOptionPane.WARNING_MESSAGE);        
         $p.setAptoParaViginalancia(1);
 		update($p); 
 end
@@ -230,7 +233,7 @@ rule "3 regra para determinar se o paciente deve ir para vigilancia"
     when
         $p : Paciente(aptoParaViginalancia == -1 && cirrose==0 && VHB == 1 && (hepatite_ativa == 1 || historicoCHC == 1) );
     then
-        System.out.println("o "+$p.getNome() + " deve ir para vigilancia");
+		JOptionPane.showMessageDialog(null, "O paciente " + $p.getNome()+ " deve ir para Vigilancia!", "Vigilancia",JOptionPane.WARNING_MESSAGE);        
         $p.setAptoParaViginalancia(1);
 		update($p); 
 end
@@ -240,7 +243,7 @@ rule "4 regra para determinar se o paciente deve ir para vigilancia"
     when
         $p : Paciente(aptoParaViginalancia == -1 && cirrose==0 && HepatiteCronica == 1 && fibroseHipaticaAvançada == 1 );
     then
-        System.out.println("o "+$p.getNome() + " deve ir para vigilancia");
+		JOptionPane.showMessageDialog(null, "O paciente " + $p.getNome()+ " deve ir para Vigilancia!", "Vigilancia",JOptionPane.WARNING_MESSAGE);        
         $p.setAptoParaViginalancia(1);
 		update($p); 
 end
@@ -250,7 +253,7 @@ rule " o paciente nao deve ir para vigilancia"
     when
         $p : Paciente(aptoParaViginalancia == -1 );
     then
-        System.out.println("o "+$p.getNome() + " não deve ir para vigilancia, obrigado");
+		JOptionPane.showMessageDialog(null, "O paciente " + $p.getNome()+ " não deve ir para Vigilancia!", "Vigilancia",JOptionPane.ERROR_MESSAGE);        
         $p.setAptoParaViginalancia(0);
         System.exit(0);
 		update($p); 
@@ -276,16 +279,14 @@ rule "Ecografia inicial"
     when
 		$p : Paciente(Nnodulos ==-1);
     then
-		System.out.println("Na ecografia inicial foram detetados quantos nodulos?");
-		System.out.print("» ");
-		Scanner input = new Scanner(System.in);
-    	int result = input.nextInt();
+		
+    	int result = Integer.parseInt(JOptionPane.showInputDialog(null,"Indique o numero de nodulos encontrados na ecogradia inicial","Ecografia Inicial",JOptionPane.QUESTION_MESSAGE));
+		
 		if(result<=0){
-			System.out.println("O paciente nao tem nenhum nodulo, por isso nao é necessario avançar, obrigado");
+			JOptionPane.showMessageDialog(null, "O paciente " + $p.getNome()+ "não tem nenhum nodulo, não podemos proseguir", "ERRO",JOptionPane.ERROR_MESSAGE);        
 	  		System.exit(0);
 		}
-		//só chega aqui se o numero de nodulos for maior que 0
-		//senao nao passa no if anterior
+
 		$p.setNnodulos(result);
 		
 		update($p);
@@ -309,16 +310,9 @@ rule "analise de tamanho e localizacao dos nodulos"
     	
 		for(int i=0; i<n; i++){
 			Nodule nodulo = new Nodule(i);
-        	System.out.println("Qual o tamanho do nodulo " + nodulo.getId() + " na ecografia ?");
-			System.out.print("» ");
-			float t = input.nextFloat();
+    		float t = Float.parseFloat(JOptionPane.showInputDialog(null,"Indique o tamanho do nodulo "+ i +" :","Nodulo " + i,JOptionPane.QUESTION_MESSAGE));
 			nodulo.setTamanho(t);
-			
-			System.out.println("Qual a localizacao do nodulo " + nodulo.getId() + " na ecografia ?");
-			System.out.print("» ");
-			
-			input = new Scanner(System.in);
-			String loc = input.nextLine();
+			String loc = JOptionPane.showInputDialog(null,"Indique a localização do nodulo "+ i +" :","Nodulo " + i,JOptionPane.QUESTION_MESSAGE);
 			nodulo.setLocal(loc);
 			insert(nodulo);
 		
@@ -329,19 +323,20 @@ end
 rule "orientar para os exames"
 	salience 73
     when
+    	$p :Paciente();
 		$n : Nodule(exame == -1);
     then
     	if($n.getTamanho()<1){
     		$n.setExame(0);
-    		System.out.println("O paciente necessita de uma US");
+			JOptionPane.showMessageDialog(null, "O paciente " + $p.getNome()+ " necessita de fazer um US", "US",JOptionPane.WARNING_MESSAGE);        
     	}else if($n.getTamanho()>1 && $n.getTamanho()<2){
     	    $n.setExame(3);
-    	   	System.out.println("O paciente necessita de Realizar TC ou RM dinamica com contraste");
+    	    JOptionPane.showMessageDialog(null, "O paciente " + $p.getNome()+ " necessita de Realizar TC ou RM dinamica com contraste", "TC ou RM dinamica com contraste",JOptionPane.WARNING_MESSAGE);        
     	    
     	}else{
     	    $n.setExame(2);
-    	   	System.out.println("O paciente necessita de Realizar TC ou RM dinamica com contraste");
-    	    
+    	   	JOptionPane.showMessageDialog(null, "O paciente " + $p.getNome()+ " necessita de Realizar TC ou RM dinamica com contraste", "TC ou RM dinamica com contraste",JOptionPane.WARNING_MESSAGE);        
+    	   	
     	}
     	update($n)
         
@@ -357,21 +352,21 @@ rule "US"
         $n :Nodule(exame==0)
         not HCC();
     then
-        System.out.println("US ao nodulo " + $n.getId() + " !");
-        System.out.println("Qual o tamanho do nodulo " + $n.getId() + " no US ?");
-    	Scanner input = new Scanner(System.in);
-    	Float t = input.nextFloat();
+
+    	float t = Float.parseFloat(JOptionPane.showInputDialog(null,"Qual o tamanho do nodulo registado na US " + $n.getId() + " no US ?" + $n.getId(),"US ao Nodulo " + $n.getId(),JOptionPane.QUESTION_MESSAGE));
+    	
     	$n.setTamanho(t);
     	if(t<1){
     		$n.setExame(1);
-    		System.out.println("Estavel, reptir US daqui a 4 meses");
+    		JOptionPane.showMessageDialog(null, "Estavel, reptir US daqui a 4 meses", "Resultado da US ao Nodulo " + $n.getId(),JOptionPane.WARNING_MESSAGE);        
+    		
     	}else if(t>1 &&t<2){
     		$n.setExame(3);//preciso de vereficar se o equipamento é sofisticado
-        	System.out.println("Nodulo com " + t + "cm é necessario um CT ou RM Dinamica com contraste");
-        	System.out.println("Recomendado centro de excelencia");
+    		JOptionPane.showMessageDialog(null, "Nodulo com " + t + "cm é necessario um CT ou RM Dinamica com contraste \n Recomendado centro de excelencia ",  "Resultado da US ao Nodulo " + $n.getId(),JOptionPane.WARNING_MESSAGE);        
+
         }else if(t>2){
        	 	$n.setExame(2);
-       	 	System.out.println("Nodulo com " + t + "cm é necessario um CT ou RM Dinamica com contraste");
+    		JOptionPane.showMessageDialog(null, "Nodulo com " + t + "cm é necessario um CT ou RM Dinamica com contraste", "Resultado da US ao Nodulo " + $n.getId(),JOptionPane.WARNING_MESSAGE);        
        	 }
         update($n);
         
