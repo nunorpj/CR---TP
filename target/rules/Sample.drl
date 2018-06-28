@@ -1,5 +1,6 @@
 package com.sample
  import java.util.*;
+import javax.swing.JOptionPane;
 
 
 //Regras de perguntas do paciente
@@ -11,12 +12,13 @@ rule "paciente tem cirrose"
     when
         $p : Paciente(cirrose == -1);
     then
-    	System.out.println("o paciente " + $p.getNome()+ " tem cirrose?");
-		System.out.print("» ");
-		
-		Scanner input = new Scanner(System.in);
-    	String result = input.nextLine();
-		if(result.equalsIgnoreCase("sim")){
+        Object[] options = {"Sim","Não"};
+		int op = JOptionPane.showOptionDialog(null, "O Paciente " + $p.getNome()+ " tem cirrose?", "Cirrose",
+    		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+    		null,options,options[1]);
+
+
+		if(op==0){
 			$p.setCirrose(1);
 		}else{
 			$p.setCirrose(0);
@@ -32,20 +34,27 @@ rule "child-pugh"
     when
         $p : Paciente(estadio == 'F' && cirrose == 1);
     then
-    	System.out.println("o paciente " + $p.getNome()+ " esta em que estagio de Child-Pugh?(A,B,C, 0 nunhum)");
-		System.out.print("» ");
-		
-		Scanner input = new Scanner(System.in);
-    	char result =  input.next().charAt(0);
-		if(result == 'a' || result == 'A'){
-			$p.setEstadio('A');
-		}else if(result == 'b' || result == 'B'){
+    	 Object[] options = {"A","B","C","Nenhum"};
+		int op = JOptionPane.showOptionDialog(null, "O Paciente " + $p.getNome()+ " esta em que estagio de Child-Pugh?", "Child-Pugh",
+    		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+    		null,options,options[3]);
+    		
+    		
+    	switch(op){
+    	
+    	case 0:
+    		$p.setEstadio('A');
+    		break;
+    	case 1:
 			$p.setEstadio('B');
-		}else if(result == 'c' || result == 'C'){
-			$p.setEstadio('C');
-		}else{
-			$p.setEstadio('0');
-		}
+    		break;
+    	case 2:
+    		$p.setEstadio('C');
+    		break;
+    	case 3:
+    		$p.setEstadio('0');
+    		break;
+    	};
 		update($p);
         
 end
@@ -58,12 +67,13 @@ rule "paciente tem hepatite B ativa"
     when
         $p : Paciente(hepatite_ativa == -1);
     then
-    	System.out.println("o paciente " + $p.getNome()+ " tem hepatite B activa?");
-		System.out.print("» ");
-		
-		Scanner input = new Scanner(System.in);
-    	String result = input.nextLine();
-		if(result.equalsIgnoreCase("sim")){
+        Object[] options = {"Sim","Não"};
+		int op = JOptionPane.showOptionDialog(null, "O Paciente " + $p.getNome()+ " Hepatite B ativa?", "Hepatite B",
+    		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+    		null,options,options[1]);
+
+
+		if(op==0){
 			$p.setHepatite_ativa(1);
 		}else{
 			$p.setHepatite_ativa(0);
@@ -79,12 +89,12 @@ rule "paciente tem VHB cronico"
     when
         $p : Paciente(VHB == -1 && hepatite_ativa==1 );
     then
-    	System.out.println("o paciente " + $p.getNome()+ " é portador cronico de VHB?");
-		System.out.print("» ");
-		
-		Scanner input = new Scanner(System.in);
-    	String result = input.nextLine();
-		if(result.equalsIgnoreCase("sim")){
+        Object[] options = {"Sim","Não"};
+		int op = JOptionPane.showOptionDialog(null, "O Paciente " + $p.getNome()+ " é portador cronico de VHB?", "VHB",
+    		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+    		null,options,options[1]);
+    		
+		if(op==0){
 			$p.setVHB(1);
 		}else{
 			$p.setVHB(0);
@@ -99,11 +109,12 @@ rule "paciente com historia de familia de CHC "
     when
         $p : Paciente(historicoCHC == -1);
     then
-    	System.out.println("o paciente " + $p.getNome()+ " tem algum familiar com historico de CHC?");
-		System.out.print("» ");
-		Scanner input = new Scanner(System.in);
-    	String result = input.nextLine();
-		if(result.equalsIgnoreCase("sim")){
+        Object[] options = {"Sim","Não"};
+		int op = JOptionPane.showOptionDialog(null, "O Paciente " + $p.getNome()+ " é tem algum familiar com historico de CHC?", "Historico de Familia",
+    		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+    		null,options,options[1]);
+    		
+		if(op==0){
 			$p.setHistoricoCHC(1);
 		}else{
 			$p.setHistoricoCHC(0);
@@ -117,11 +128,12 @@ rule "paciente tem hepatite cronica C"
     when
         $p : Paciente(HepatiteCronica == -1);
     then
-    	System.out.println("o paciente " + $p.getNome()+ " tem hepatite crónica C?");
-		System.out.print("» ");
-		Scanner input = new Scanner(System.in);
-    	String result = input.nextLine();
-		if(result.equalsIgnoreCase("sim")){
+        Object[] options = {"Sim","Não"};
+		int op = JOptionPane.showOptionDialog(null, "O Paciente " + $p.getNome()+ " tem Hepatite Crónica C?", "Hepatite Crónica C",
+    		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+    		null,options,options[1]);
+    		
+		if(op==0){
 			$p.setHepatiteCronica(1);
 		}else{
 			$p.setHepatiteCronica(0);
