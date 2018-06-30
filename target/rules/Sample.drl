@@ -12,6 +12,7 @@ rule "paciente tem cirrose"
     when
         $p : Paciente(cirrose == -1);
     then
+
         Object[] options = {"Sim","Não"};
 		int op = JOptionPane.showOptionDialog(null, "O Paciente " + $p.getNome()+ " tem cirrose?", "Cirrose",
     		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
@@ -379,14 +380,15 @@ rule "ct e rm"
         $n :Nodule(exame==2 || exame ==3);
         not HCC();
     then
-        System.out.println("Quantas tecnicas ficaram positivas no nodulo " + $n.getId() + "?(1 ou 2)");
-    	Scanner input = new Scanner(System.in);
-    	int nPositives = input.nextInt();
+    
+        int nPositives = Integer.parseInt(JOptionPane.showInputDialog(null,"Quantas tecnicas ficaram positivas no nodulo " + $n.getId() + "?(1 ou 2)" + $n.getId(),"CT e RM ao Nodulo " + $n.getId(),JOptionPane.QUESTION_MESSAGE));
+
 		if(nPositives == 0){
-			System.out.println("É necessario uma Biopsia !");
+			JOptionPane.showMessageDialog(null, "É necessario uma Biopsia !",  "CT e RM ao Nodulo " + $n.getId(),JOptionPane.WARNING_MESSAGE);        
+			
 			$n.setExame(4);
 		}else if(nPositives==2 || ($n.getExame()==2 && nPositives == 1)){
-			System.out.println("É HCC!");
+			JOptionPane.showMessageDialog(null, "É HCC!",  "CT e RM ao Nodulo  " + $n.getId(),JOptionPane.WARNING_MESSAGE);        
 			$n.setExame(5);
 			insert(new HCC());
 		}
@@ -400,17 +402,18 @@ rule "equipamento sofisticado"
         $n :Nodule(exame==3);
         not HCC();
     then
-        System.out.println("o equipamento usado na realizacao dos exames ao nodulo " + $n.getId() + " era sofisticado ?");
-    
-    	Scanner input = new Scanner(System.in);
-    	String result = input.nextLine();	
+    Object[] options = {"Sim","Não"};
+		int op = JOptionPane.showOptionDialog(null, "O equipamento usado na realizacao dos exames ao nodulo " + $n.getId() + " era sofisticado ?", "Equipamento sofisticado?",
+    		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+    		null,options,options[1]);
+
 	
-		if(result.equalsIgnoreCase("sim")){
-			System.out.println("É HCC!");
+		if(op==0){
+			JOptionPane.showMessageDialog(null, "É HCC!",  "CT e RM ao Nodulo  " + $n.getId(),JOptionPane.WARNING_MESSAGE);        
 			$n.setExame(5);
 			insert(new HCC());
 		}else{
-			System.out.println("É necessario uma Biopsia !");
+			JOptionPane.showMessageDialog(null, "É necessario uma Biopsia !",  "CT e RM ao Nodulo " + $n.getId(),JOptionPane.WARNING_MESSAGE);        
 			$n.setExame(4);
 		}
 		update($n);
@@ -421,14 +424,16 @@ rule "Biopsy"
         $n :Nodule(exame==4);
         not HCC();
     then
-        System.out.println("O resultado da Biopsia ao nodulo " + $n.getId() + " foi positiva?");
-    	Scanner input = new Scanner(System.in);
-    	String result = input.nextLine();
-		if(result.equalsIgnoreCase("sim")){
-			System.out.println("É HCC!");
+        Object[] options = {"Sim","Não"};
+		int op = JOptionPane.showOptionDialog(null, "O resultado da Biopsia ao nodulo " + $n.getId() + " foi positiva?", "Biopsia ao Nodulo " + $n.getId() ,
+    		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+    		null,options,options[1]);
+ 
+		if(op==0){
+			JOptionPane.showMessageDialog(null, "É HCC!",  "Biopsia ao Nodulo " + $n.getId(),JOptionPane.WARNING_MESSAGE);        
 			insert(new HCC());
 		}else{
-			System.out.println("Resultado inconclusivo ,porfavor repita a Ecografia daqui a 4 meses");
+			JOptionPane.showMessageDialog(null, "Resultado inconclusivo, porfavor repita a Ecografia daqui a 4 meses", "Biopsia ao Nodulo " + $n.getId(),JOptionPane.WARNING_MESSAGE);        
 			$n.setExame(1);
 		}
 		update($n);
@@ -442,8 +447,8 @@ rule "CHC"
     when
         exists HCC();
     then
-            System.out.println("Vamos agora avaliar o estádio do CHC!");
-
+    	JOptionPane.showMessageDialog(null, "Vamos agora avaliar o estádio do CHC!",  "Estadio CHC! ",JOptionPane.WARNING_MESSAGE);        
+    
 end
 
 rule "PS KARNOFSKY"
@@ -452,21 +457,22 @@ rule "PS KARNOFSKY"
     when
         $p : Paciente(PS_KARNOFSKY == -1);
     then
-    	System.out.println("Indique escala de desempenho Karnofsky do paciente " + $p.getNome()+ " ?");
-		System.out.println("100 - Normal, sem queixas e sem ividencia de doenças");
-		System.out.println("90 - Capaz de efectuar tarefas normais, sintomas ou sinais de doença menores ");
-		System.out.println("80 - Atividade normal com esforço, alguns sinais ou sintomas de doença");
-		System.out.println("70 - Cuida de si mesmo, mas incapaz de realizar uma atividade normal ou de fazer um trabalho ativo");
-		System.out.println("60 - Requer assistência ocasional, mas é capaz de cuidar da maioria das necessidades pessoais");
-		System.out.println("50 - Requer assistência considerável e cuidados médicos freqüentes");
-		System.out.println("40 - Deficente,requer cuidados e assistência especiais");
-		System.out.println("30 - Deficente sério, a hospitalização é indicada, embora a morte não seja iminente");
-		System.out.println("20 - Muito doente,  hospitalização e cuidados de suporte ativos necessários");
-		System.out.println("10 - Moribundo");
-		System.out.println("0 - Morto");
-		System.out.print("» ");
-		Scanner input = new Scanner(System.in);
-    	int result =  input.nextInt();
+    
+    	int result = Integer.parseInt(JOptionPane.showInputDialog(null,
+    	"Indique escala de desempenho Karnofsky do paciente:\n\n"	+
+    		"100 - Normal, sem queixas e sem ividencia de doenças\n"+
+    		"\t90 - Capaz de efectuar tarefas normais, sintomas ou sinais de doença menores \n"+
+    	"\t80 - Atividade normal com esforço, alguns sinais ou sintomas de doença\n"+
+    	"\t70 - Cuida de si mesmo, mas incapaz de realizar uma atividade normal ou de fazer um trabalho ativo\n"+
+    	"\t60 - Requer assistência ocasional, mas é capaz de cuidar da maioria das necessidades pessoais\n"+
+    	"\t50 - Requer assistência considerável e cuidados médicos freqüentes\n"+
+    	"\t40 - Deficente,requer cuidados e assistência especiais\n"+
+    	"\t30 - Deficente sério, a hospitalização é indicada, embora a morte não seja iminente\n"+
+    	"\t20 - Muito doente,  hospitalização e cuidados de suporte ativos necessários\n"+
+    	"\t10 - Moribundo\n"+
+    	"\t0 - Morto",
+    	"Escala de desempenho Karnofsky",JOptionPane.QUESTION_MESSAGE));
+
 		if(result>=0 && result<=100){
 			$p.setPS_KARNOFSKY(result);;
 		}else{
