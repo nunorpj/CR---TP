@@ -598,7 +598,7 @@ rule "Sera estagio 0?"//feito
   		$p : Paciente(PS_ECOG==0 && estadio == 'A'&& Nnodulos==1 ) 
   		$n : Nodule(tamanho<2) //pode ser feito aqui porque so passa na linha de cima de só houver 1 nodulo
     then
-        System.out.println("O paciente "+$p.getNome()+" está no Estadio muito inicial (0)");
+    	JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" está no Estadio muito inicial (0)",  "Estadio muito inicial (0)",JOptionPane.WARNING_MESSAGE);        
         $h.setStage('0');
         update($h);
 end
@@ -612,7 +612,8 @@ rule "Sera estagio A?"//correto agora
     	$ns :	ArrayList(size<=3 && size>=1)
     			from collect (Nodule(tamanho<=3))
     then
-    	System.out.println("O paciente "+$p.getNome()+" está no Estadio Inicial (A)");
+        JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" está no Estadio Inicial (A)",  "Estadio  Inicial (A)",JOptionPane.WARNING_MESSAGE);        
+    
         $h.setStage('A');
         $p.setPressaoPortal(-1);
         update($h);
@@ -628,7 +629,8 @@ rule "Sera estagio B?" //feito
     	$h : HCC(stage=='1')
     	$p : Paciente(PS_ECOG==0 && (estadio=='A' || estadio=='B') && Nnodulos>3)
     then
-		System.out.println("O paciente "+$p.getNome()+" está no Estadio Intermédio(B)");
+        JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" está no Estadio Intermédio(B)",  "Estadio Intermédio(B)",JOptionPane.WARNING_MESSAGE);        
+   
         $h.setStage('B');
         update($h);
 end
@@ -639,7 +641,7 @@ rule "Sera estagio C?" //feito missing erp«cao portal
     	$h : HCC(stage=='1' && (N==1 || M==1))
     	$p : Paciente((PS_ECOG==1 || PS_ECOG==2) && (estadio=='A' || estadio=='B'))    	
     then
-		System.out.println("O paciente "+$p.getNome()+" está no Estadio Avançado (C)");
+        JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" está no Estadio Avançado (C)",  "Estadio Avançado (C)",JOptionPane.WARNING_MESSAGE);        
         $h.setStage('C');
         update($h);
 end
@@ -650,7 +652,7 @@ rule "Sera estagio D?"//feito
     	$h : HCC(stage=='1')
     	$p : Paciente(PS_ECOG > 2 && estadio == 'C')
     then
-    	System.out.println("O paciente "+$p.getNome()+" está no Estadio Terminal (D)");
+        JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" está no  Estadio Terminal (D)",  " Estadio Terminal (D)",JOptionPane.WARNING_MESSAGE);  
         $h.setStage('D');
         update($h);
 
@@ -667,7 +669,9 @@ rule "Tratamento Estadio 0"//feito
        $h : HCC(stage=='0');
        $p: Paciente();
     then
-		System.out.println("O paciente "+$p.getNome()+" tem um Carcinoma que deve ser removido o mais rápido possível.");
+        JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" tem um Carcinoma que deve ser removido o mais rápido possível.",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
+        $p.setTratamento("Remoção de Carciona");
+        update($p);
 end
 
 // REGRAS ESTAGIO A
@@ -680,13 +684,13 @@ rule "pressão portal"//feito
 		$h : HCC(stage=='A');
 		$p : Paciente(Nnodulos==1 && PressaoPortal==-1);
 	then
-		System.out.println("O pacinete "+$p.getNome()+" tem pressão portal aumentada?");
-		System.out.print("» ");
+		Object[] options = {"Sim","Não"};
+		int op = JOptionPane.showOptionDialog(null, "O pacinete "+$p.getNome()+" tem pressão portal aumentada?", "Pressão Portal",
+    		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+    		null,options,options[1]);
+	
 		
-		Scanner input = new Scanner(System.in);
-    	String result = input.nextLine();
-		
-		if(result.equalsIgnoreCase("sim")){
+		if(op==0){
 			$p.setPressaoPortal(1);
 		}else{
 			$p.setPressaoPortal(0);
@@ -699,7 +703,7 @@ rule "Tratamento Estado A : Resseçao" //feito
        $h : HCC(stage=='A');
        $p: Paciente(PressaoPortal==0 && Tratamento == "VAZIO");
     then
-		System.out.println("O paciente precisa de uma Ressecção");
+        JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" precisa de uma Ressecção",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
 		$p.setTratamento("Ressecção");
 		update($p);
 end
@@ -712,23 +716,24 @@ rule "Doenças associadas" //testar
 	then
 		if($p.getHepatite_ativa()==1 || $p.getHepatiteCronica()==1){
 			$p.setDoencasAssociadas(1);
-			System.out.println("O paciente precisa de uma Ablacação percutânea");
+			JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" de uma Ablacação percutânea",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
 			$p.setTratamento("Ablacação percutânea");
 		}else{
-			System.out.println("O pacinete "+$p.getNome()+" tem alguma doença associada?");
-			System.out.print("» ");
+
+        	Object[] options = {"Sim","Não"};
+			int op = JOptionPane.showOptionDialog(null, "O Paciente " + $p.getNome()+ " tem alguma doença associada?", "Doenças associadas",
+    			JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+    			null,options,options[1]);
+			
 		
-			Scanner input = new Scanner(System.in);
-    		String result = input.nextLine();
-		
-			if(result.equalsIgnoreCase("sim")){
+			if(op==0){
 				$p.setDoencasAssociadas(1);
-				System.out.println("O paciente precisa de uma Ablacação percutânea");
+				JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" de uma Ablacação percutânea",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
 				$p.setTratamento("Ablacação percutânea");
 			
 			}else{
 				$p.setDoencasAssociadas(0);
-				System.out.println("O paciente precisa de um Transplante");
+				JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" de um Transplante",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
 				$p.setTratamento("Transplante");
 			}
 			update($p);
@@ -748,7 +753,7 @@ rule "Tratamento Quimioembolizacao"
        $p: Paciente(Tratamento == "VAZIO");    
     
     then
-        System.out.println("O paciente precisa de Quimioembolização");
+        JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" precisa de  Quimioembolização",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
         $p.setTratamento("Quimioembolização");
         update($p);
 end
@@ -763,7 +768,7 @@ rule "tratamento Sorafenib"
        $p: Paciente(Tratamento == "VAZIO");    
     
     then
-        System.out.println("O paciente precisa de Sorafenib");
+    	JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" precisa de  Sorafenib",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
         $p.setTratamento("Sorafenib");
         update($p);
 end
@@ -778,7 +783,7 @@ rule "Tratamento Sintomático"
        $p: Paciente(Tratamento == "VAZIO");    
     
     then
-        System.out.println("O paciente precisa de Sintomático");
+        JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" precisa de  Sintomático",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
         $p.setTratamento("Sintomático");
         update($p);
 end
