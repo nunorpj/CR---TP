@@ -682,7 +682,7 @@ rule "pressão portal"//feito
 	salience 44
 	when 
 		$h : HCC(stage=='A');
-		$p : Paciente(Nnodulos==1 && PressaoPortal==-1);
+		$p : Paciente(Nnodulos==1 && PressaoPortal==-1 && Tratamento == "VAZIO");
 	then
 		Object[] options = {"Sim","Não"};
 		int op = JOptionPane.showOptionDialog(null, "O pacinete "+$p.getNome()+" tem pressão portal aumentada?", "Pressão Portal",
