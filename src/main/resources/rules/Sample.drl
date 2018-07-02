@@ -708,37 +708,58 @@ rule "Tratamento Estado A : Resseçao" //feito
 		update($p);
 end
 
-rule "Doenças associadas" //testar
+rule "Tratamento Resseçao" //testar
 	salience 42
 	when 
 		$h : HCC(stage=='A');
-		( ($ns :	ArrayList(size>=2) from collect (Nodule(tamanho<=3)) && $p : Paciente(DoencasAssociadas==-1)  || $p : Paciente(PressaoPortal==1 && DoencasAssociadas==-1) ) )
+		$p : Paciente(Nnodulos==1 && PressaoPortal==0 && Tratamento == "VAZIO");
 	then
-		if($p.getHepatite_ativa()==1 || $p.getHepatiteCronica()==1){
-			$p.setDoencasAssociadas(1);
-			JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" de uma Ablacação percutânea",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
-			$p.setTratamento("Ablacação percutânea");
-		}else{
+			JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" de uma ressesao",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
+			$p.setTratamento("Resseçâo");
 
-        	Object[] options = {"Sim","Não"};
-			int op = JOptionPane.showOptionDialog(null, "O Paciente " + $p.getNome()+ " tem alguma doença associada?", "Doenças associadas",
-    			JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-    			null,options,options[1]);
-			
+			update($p);
+end
+
+rule "Doenças associadas" //testar
+	salience 41//isto só acontece se a pressao aumentar (=1) porque senao as regras anteriores disparam e nao cega aqui
+	when //trust me
+		$h : HCC(stage=='A');
+		$p : Paciente((hepatite_ativa ==1 || hepatiteCronica  ==1 ) && Tratamento == "VAZIO")//pq o vazio altera nas anteriores
+	then
+			$p.setDoencasAssociadas(1);
+			update($p);
+end
+
+
+rule "Tratamento Translante" //testar
+	salience 40
+	when 
+		$h : HCC(stage=='A');
+		$p : Paciente( Tratamento == "VAZIO" && ( DoencasAssociadas==-1||DoencasAssociadas==0 ))
 		
-			if(op==0){
-				$p.setDoencasAssociadas(1);
+	then
+			JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" de um Transplante",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
+			$p.setTratamento("Transplante");
+
+			update($p);
+end
+
+
+rule "Tratamento Ablaçao percutanea" //testar
+	salience 39
+	when 
+		$h : HCC(stage=='A');
+		$p : Paciente( Tratamento == "VAZIO" && DoencasAssociadas==1)
+	then
 				JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" de uma Ablacação percutânea",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
 				$p.setTratamento("Ablacação percutânea");
 			
-			}else{
-				$p.setDoencasAssociadas(0);
-				JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" de um Transplante",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
-				$p.setTratamento("Transplante");
-			}
+
 			update($p);
-		}
+		
 end
+
+
 
 
 
@@ -747,7 +768,7 @@ end
 //
 //
 rule "Tratamento Quimioembolizacao"
-	salience 40
+	salience 35
     when
        $h : HCC(stage=='B');
        $p: Paciente(Tratamento == "VAZIO");    
