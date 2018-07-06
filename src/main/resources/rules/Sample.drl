@@ -25,6 +25,7 @@ rule "paciente tem cirrose"
 			$p.setCirrose(0);
 			$p.setFibroseHipaticaAvançada(0);
 			$p.setaAguardarTransplanteHepático(0);
+			$p.setEstadio('0');
 		}
 		update($p);
         
@@ -455,6 +456,7 @@ rule "PS KARNOFSKY"
 	salience 59
 
     when
+    	exists HCC();
         $p : Paciente(PS_KARNOFSKY == -1);
     then
     
@@ -595,7 +597,7 @@ rule "Sera estagio 0?"//feito
     	
     	exists HCC();
     	$h : HCC(stage=='1')
-  		$p : Paciente(PS_ECOG==0 && estadio == 'A'&& Nnodulos==1 ) 
+  		$p : Paciente(PS_ECOG==0 && estadio=='A' || estadio == '0' && Nnodulos==1 ) 
   		$n : Nodule(tamanho<2) //pode ser feito aqui porque so passa na linha de cima de só houver 1 nodulo
     then
     	JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" está no Estadio muito inicial (0)",  "Estadio muito inicial (0)",JOptionPane.WARNING_MESSAGE);        
@@ -608,7 +610,7 @@ rule "Sera estagio A?"//correto agora
 	when
     	exists HCC();
     	$h : HCC(stage=='1');
-    	$p: Paciente(PS_ECOG==0 &&(estadio=='A' || estadio=='B'));	
+    	$p: Paciente(PS_ECOG==0 &&(estadio=='A' || estadio=='B'|| estadio == '0'));	
     	$ns :	ArrayList(size<=3 && size>=1)
     			from collect (Nodule(tamanho<=3))
     then
@@ -627,7 +629,7 @@ rule "Sera estagio B?" //feito
     when
     	exists HCC();
     	$h : HCC(stage=='1')
-    	$p : Paciente(PS_ECOG==0 && (estadio=='A' || estadio=='B') && Nnodulos>3)
+    	$p : Paciente(PS_ECOG==0 && (estadio=='A' || estadio=='B'|| estadio == '0') && Nnodulos>3)
     then
         JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" está no Estadio Intermédio(B)",  "Estadio Intermédio(B)",JOptionPane.WARNING_MESSAGE);        
    
@@ -639,7 +641,7 @@ rule "Sera estagio C?" //feito missing erp«cao portal
     when
     	exists HCC();
     	$h : HCC(stage=='1' && (N==1 || M==1))
-    	$p : Paciente((PS_ECOG==1 || PS_ECOG==2) && (estadio=='A' || estadio=='B'))    	
+    	$p : Paciente((PS_ECOG==1 || PS_ECOG==2) && (estadio=='A' || estadio=='B'|| estadio == '0'))    	
     then
         JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" está no Estadio Avançado (C)",  "Estadio Avançado (C)",JOptionPane.WARNING_MESSAGE);        
         $h.setStage('C');
@@ -667,7 +669,7 @@ rule "Tratamento Estadio 0"//feito
 	salience 45
     when
        $h : HCC(stage=='0');
-       $p: Paciente();
+       $p: Paciente(Tratamento=="VAZIO");
     then
         JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" tem um Carcinoma que deve ser removido o mais rápido possível.",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
         $p.setTratamento("Remoção de Carciona");
@@ -692,6 +694,7 @@ rule "pressão portal"//feito
 		
 		if(op==0){
 			$p.setPressaoPortal(1);
+			$p.setDoencasAssociadas(-1);
 		}else{
 			$p.setPressaoPortal(0);
 		}
@@ -724,21 +727,21 @@ rule "Doenças associadas" //testar
 	salience 41//isto só acontece se a pressao aumentar (=1) porque senao as regras anteriores disparam e nao cega aqui
 	when //trust me
 		$h : HCC(stage=='A');
-		$p : Paciente((hepatite_ativa ==1 || hepatiteCronica  ==1 ) && Tratamento == "VAZIO")//pq o vazio altera nas anteriores
+		$p : Paciente((hepatite_ativa ==1 || hepatiteCronica  ==1 || VHB == 1) && Tratamento == "VAZIO")//pq o vazio altera nas anteriores
 	then
 			$p.setDoencasAssociadas(1);
 			update($p);
 end
 
 
-rule "Tratamento Translante" //testar
+rule "Tratamento Transplante" //testar
 	salience 40
 	when 
 		$h : HCC(stage=='A');
 		$p : Paciente( Tratamento == "VAZIO" && ( DoencasAssociadas==-1||DoencasAssociadas==0 ))
 		
 	then
-			JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" de um Transplante",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
+			JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" precisa de um Transplante",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
 			$p.setTratamento("Transplante");
 
 			update($p);
@@ -751,7 +754,7 @@ rule "Tratamento Ablaçao percutanea" //testar
 		$h : HCC(stage=='A');
 		$p : Paciente( Tratamento == "VAZIO" && DoencasAssociadas==1)
 	then
-				JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" de uma Ablacação percutânea",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
+				JOptionPane.showMessageDialog(null, "O paciente "+$p.getNome()+" precisa de uma Ablacação percutânea",  "Tratamento",JOptionPane.WARNING_MESSAGE);  
 				$p.setTratamento("Ablacação percutânea");
 			
 

@@ -175,6 +175,7 @@ public class Paciente {
 		this.Nnodulos=-1;
 		this.Tratamento = "VAZIO";
 		this.DoencasAssociadas=-1;
+		this.PressaoPortal=-1;
 
 	}
 
